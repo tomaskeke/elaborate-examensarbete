@@ -1,24 +1,13 @@
-import {
-  Box,
-  FlatList,
-  Heading,
-  Avatar,
-  HStack,
-  VStack,
-  Text,
-  Spacer,
-  Center,
-  NativeBaseProvider,
-} from "native-base";
+import { Box, Avatar, HStack, VStack, Text, Spacer, Center } from "native-base";
 import React from "react";
+import ModalComponent from "./ModalComponent";
 import { useDispatch, useSelector } from "react-redux";
 import AdminMenu from "./AdminMenu";
 
-const EventCard = ({ navigation, item }) => {
+const EventCard = ({ navigation, item, setShowModal, showModal }) => {
   const { user } = useSelector((state) => state.auth);
-  console.log(item.item.admin.includes(user._id));
   return (
-    <Box mx={2} key={item.id}>
+    <Box mx={2} key={item.key}>
       <Box
         borderBottomWidth="1"
         _dark={{
@@ -43,6 +32,11 @@ const EventCard = ({ navigation, item }) => {
               }}
               color="coolGray.800"
               bold
+              onPress={() =>
+                navigation.navigate("EventDetails", {
+                  itemId: item.item._id,
+                })
+              }
             >
               {item.item.title}
             </Text>
@@ -65,11 +59,27 @@ const EventCard = ({ navigation, item }) => {
               color="coolGray.800"
               alignSelf="flex-start"
             >
-              {item.item.createdAt.split("T")[0]}
+              {new Date(item.item.createdAt).toLocaleString("en-US")}
             </Text>
-            {item.item.admin.includes(user._id) ? <AdminMenu /> : <></>}
+            {item.item.admin.includes(user._id) ? (
+              <AdminMenu
+                setShowModal={setShowModal}
+                showModal={showModal}
+                item={item.item}
+              />
+            ) : (
+              <></>
+            )}
           </VStack>
         </HStack>
+        <Center>
+          <ModalComponent
+            title="Update event"
+            item={item}
+            setShowModal={setShowModal}
+            showModal={showModal}
+          />
+        </Center>
       </Box>
     </Box>
   );

@@ -1,15 +1,16 @@
 import { Box, Button } from "native-base";
 import { reset, logout } from "../features/auth/authSlice";
+import { resetEvents } from "../features/events/eventSlice";
 import { useSelector, useDispatch } from "react-redux";
 import React from "react";
 
 const SettingsScreen = ({ navigation }) => {
   const dispatch = useDispatch();
-  const { user, isError, message } = useSelector((state) => state.auth);
+  const { isError, message } = useSelector((state) => state.auth);
   const handleLogout = async () => {
     dispatch(logout());
-    console.log(user);
     dispatch(reset());
+    dispatch(resetEvents());
     navigation.navigate("Home");
     if (isError) {
       console.log(message);

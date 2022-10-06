@@ -1,10 +1,10 @@
-import { Pressable } from "react-native";
+import { View, Text, Pressable } from "react-native";
 import React from "react";
-import { Input, Icon } from "native-base";
+import { Stack, TextArea, Icon } from "native-base";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Controller } from "react-hook-form";
 
-const CustomInput = ({
+const CustomTextArea = ({
   control,
   name,
   placeholder,
@@ -25,7 +25,7 @@ const CustomInput = ({
         control={control}
         name={name}
         render={({ field: { value, onChange, onBlur } }) => (
-          <Input
+          <TextArea
             value={value}
             onChangeText={onChange}
             onBlur={onBlur}
@@ -68,4 +68,4 @@ const CustomInput = ({
   );
 };
 
-export default CustomInput;
+export default CustomTextArea;
