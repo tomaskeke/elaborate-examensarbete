@@ -73,9 +73,11 @@ const updateEvent = asyncHandler(async (req, res) => {
     throw new Error("User not found");
   }
   // make sure logged in user matches event user
-  if (event.creator.toString() !== user.id) {
-    res.status(401);
-    throw new Error("User not authorized");
+  if (event.creator.toString() !== user.id.toString()) {
+    if (!event.admin.includes(user.id.toString())) {
+      res.status(401);
+      throw new Error("User not authorized");
+    }
   }
   const updatedEvent = await Event.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
