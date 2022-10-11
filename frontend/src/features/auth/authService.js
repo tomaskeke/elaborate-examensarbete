@@ -1,7 +1,6 @@
 import axios from "axios";
-import * as SecureStore from "expo-secure-store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-const API_URL = "http://10.0.2.2:5000";
+const API_URL = "http://192.168.0.12:5000";
 
 const save = async (key, value) => {
   try {
@@ -40,10 +39,17 @@ export const logout = async () => {
   console.log("done");
 };
 
+export const getUser = async (userId) => {
+  const response = await axios.get(`${API_URL}/api/users/${userId}`);
+
+  return response.data;
+};
+
 const authService = {
   register,
   login,
   logout,
+  getUser,
 };
 
 export default authService;

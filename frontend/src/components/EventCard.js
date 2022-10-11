@@ -9,6 +9,7 @@ const EventCard = ({ navigation, item, setShowModal, showModal }) => {
   return (
     <Box mx={2} key={item.key}>
       <Box
+        key={item.key}
         borderBottomWidth="1"
         _dark={{
           borderColor: "muted.50",
@@ -61,7 +62,7 @@ const EventCard = ({ navigation, item, setShowModal, showModal }) => {
             >
               {new Date(item.item.createdAt).toLocaleString("en-US")}
             </Text>
-            {item.item.admin.includes(user._id) ? (
+            {user && item.item.admin.includes(user._id) ? (
               <AdminMenu
                 setShowModal={setShowModal}
                 showModal={showModal}

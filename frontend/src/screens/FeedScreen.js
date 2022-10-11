@@ -1,71 +1,66 @@
+import { Box, Center, ScrollView, Text } from "native-base";
 import React from "react";
-import { VStack, Box, FormControl, Button, useToast } from "native-base";
-import CustomInput from "../components/CustomInput";
-import CustomTextArea from "../components/CustomTextArea";
-import { useForm } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
-import { createEvent } from "../features/events/eventSlice";
-import CustomToast from "../components/CustomToast";
+import { useSelector, useDispatch } from "react-redux";
+import Constants from "expo-constants";
+import { getEvents, resetEvents } from "../features/events/eventSlice";
+import CustomSelect from "../components/CustomSelect";
+import FeedCard from "../components/FeedCard";
+import { resetPosts, getEventPosts } from "../features/posts/postsSlice";
 
-const FeedScreen = ({ navigation }) => {
+const API_URL = "http://10.0.2.2:5000";
+
+export default function FeedScreen({ navigation }) {
+  const [service, setService] = React.useState(null);
   const dispatch = useDispatch();
-  const Toast = useToast();
-  const { control, handleSubmit, reset } = useForm();
-  const { events, isError, isSuccess, message } = useSelector(
-    (state) => state.events
-  );
-  const handleCreate = (data) => {
-    console.log(data);
-    if (isSuccess) {
-      Toast.show({
-        style: {
-          backgroundColor: "green",
-        },
-        render: () => {
-          return (
-            <CustomToast
-              id={id}
-              title={"Successfully created event!"}
-              description={`created ${data.title}`}
-              variant={"subtle"}
-              isClosable={true}
-            />
-          );
-        },
-      });
-      navigation.navigate("MyEventsScreen");
+  const { events } = useSelector((state) => state.events);
+  const { posts, isError, message } = useSelector((state) => state.posts);
+  const { user, isSuccess } = useSelector((state) => state.auth);
+
+  React.useEffect(() => {
+    if (!user) {
+      resetEvents();
     }
-    dispatch(createEvent(data));
-    reset();
-  };
+    if (isSuccess) {
+      dispatch(getEvents());
+    }
+
+    return () => {
+      dispatch(resetEvents());
+      dispatch(resetPosts());
+    };
+  }, [dispatch, isSuccess]);
   return (
     <Box>
-      <VStack>
-        <FormControl>
-          <FormControl.Label>Event title</FormControl.Label>
-          <CustomInput
-            name="title"
-            pw={false}
-            control={control}
-            secureTextEntry={false}
-          />
-        </FormControl>
-        <FormControl mt="3">
-          <FormControl.Label>Description</FormControl.Label>
-          <CustomTextArea
-            name="desc"
-            pw={false}
-            control={control}
-            h={100}
-            w="100%"
-            maxW={300}
-            secureTextEntry={false}
-          />
-        </FormControl>
-        <Button onPress={handleSubmit(handleCreate)}>Create</Button>
-      </VStack>
+      {user ? (
+        <>
+          <Box
+            style={{
+              paddingTop: Constants.statusBarHeight,
+              alignItems: "flex-end",
+              marginRight: 4,
+            }}
+          >
+            <CustomSelect
+              service={service !== null ? service : null}
+              setService={setService}
+              events={events}
+            />
+          </Box>
+          <ScrollView>
+            {service !== null && posts.length > 0 ? (
+              posts.map((post) => <FeedCard post={post} />)
+            ) : isError ? (
+              <Text>{message}</Text>
+            ) : (
+              <Text>No event selected.</Text>
+            )}
+          </ScrollView>
+        </>
+      ) : (
+        <Text style={{ paddingTop: Constants.statusBarHeight }}>
+          Du behöver logga in för att se den här vyn
+        </Text>
+      )}
     </Box>
   );
-};
-
-export default FeedScreen;
+}

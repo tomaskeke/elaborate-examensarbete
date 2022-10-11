@@ -11,21 +11,23 @@ import {
 
 const CustomToast = ({
   id,
+  Toast,
   status,
   variant,
   title,
   description,
   isClosable,
+  bg,
   ...rest
 }) => {
-  const Toast = useToast();
   return (
     <Alert
-      maxWidth="100%"
+      maxWidth="95%"
       alignSelf="center"
       flexDirection="row"
       status={status ? status : "info"}
       variant={variant}
+      bg={bg}
       {...rest}
     >
       <VStack space={1} flexShrink={1} w="100%">

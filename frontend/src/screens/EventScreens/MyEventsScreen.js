@@ -2,9 +2,11 @@ import React, { useEffect, useState } from "react";
 import { Box, FlatList, Text, Button, ScrollView, View } from "native-base";
 import { useDispatch, useSelector } from "react-redux";
 import { getEvents, resetEvents } from "../../features/events/eventSlice";
+import { reset } from "../../features/auth/authSlice";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import EventCard from "../../components/EventCard";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useHeaderHeight } from "@react-navigation/elements";
 
 const MyEventsScreen = ({ navigation, route }) => {
   const dispatch = useDispatch();
@@ -13,6 +15,7 @@ const MyEventsScreen = ({ navigation, route }) => {
     (state) => state.events
   );
   const [showModal, setShowModal] = useState(false);
+  const headerHeight = useHeaderHeight();
   useEffect(() => {
     if (isError) {
       console.log(message);
@@ -21,11 +24,12 @@ const MyEventsScreen = ({ navigation, route }) => {
     if (!user) {
       navigation.navigate("LoginScreen");
     }
-
-    dispatch(getEvents());
+    if (!isError) {
+      dispatch(getEvents());
+    }
 
     return () => {
-      dispatch(resetEvents());
+      dispatch(reset());
     };
   }, [user, isError, isUpdated, dispatch]);
 

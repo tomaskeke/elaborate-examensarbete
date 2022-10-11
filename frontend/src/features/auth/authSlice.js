@@ -13,6 +13,7 @@ const user = getUserFromAsyncStorage("user");
 
 const initialState = {
   user: user ? user : null,
+  inspectUser: {},
   isError: false,
   isSuccess: false,
   isLoading: false,
@@ -51,6 +52,23 @@ export const login = createAsyncThunk("auth/login", async (user, thunkAPI) => {
 export const logout = createAsyncThunk("auth/logout", async () => {
   await authService.logout();
 });
+
+export const getUser = createAsyncThunk(
+  "auth/getUser",
+  async (userId, thunkAPI) => {
+    try {
+      return await authService.getUser(userId);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
 
 export const authSlice = createSlice({
   name: "auth",
@@ -98,6 +116,21 @@ export const authSlice = createSlice({
       })
       .addCase(logout.rejected, (state, action) => {
         state.message = action.payload;
+      })
+      .addCase(getUser.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getUser.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+        state.inspectUser = action.payload;
+      })
+      .addCase(getUser.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+        state.inspectUser = {};
       });
   },
 });

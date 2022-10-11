@@ -2,6 +2,7 @@ const asyncHandler = require("express-async-handler");
 
 const Event = require("../model/eventModel");
 const User = require("../model/userModel");
+const Post = require("../model/postModel");
 
 // @desc    Get event
 // @route GET /api/events
@@ -31,14 +32,45 @@ const getEvent = asyncHandler(async (req, res) => {
   res.status(200).json(event);
 });
 
+const getEventMembers = asyncHandler(async (req, res) => {
+  const event = await Event.findById(req.params.id);
+
+  if (!event.user) {
+    res.status(400);
+    throw new Error("No event members found");
+  }
+  const users = await User.find({ _id: { $in: event.user } });
+
+  res.status(200).json(users);
+});
+
+// @desc    Set events
+// @route POST /api/events/:id/eventposts
+// @access private
+const getEventPosts = asyncHandler(async (req, res) => {
+  const event = await Event.findById(req.params.id);
+
+  if (!event.posts.length > 0) {
+    res.status(400);
+    throw new Error("No posts found");
+  }
+  const posts = await Post.find({ _id: { $in: event.posts } });
+
+  res.status(200).json(posts);
+});
+
 // @desc    Set events
 // @route POST /api/events
 // @access private
 const setEvent = asyncHandler(async (req, res) => {
   const { title, desc } = req.body;
-  if (!req.body.desc) {
+  if (!title) {
     res.status(400);
-    throw new Error("Please add a text field");
+    throw new Error("Event must have a title");
+  }
+  if (!desc) {
+    res.status(400);
+    throw new Error("Event must have a description");
   }
   const eventExists = await Event.findOne({ title });
 
@@ -51,8 +83,9 @@ const setEvent = asyncHandler(async (req, res) => {
     creator: req.user.id,
     desc: req.body.desc,
     title: req.body.title,
-    user: req.body.admin,
+    user: req.user.id,
     admin: req.user.id,
+    posts: [],
   });
   res.status(200).json(event);
 });
@@ -258,6 +291,8 @@ const deleteEvent = asyncHandler(async (req, res) => {
 module.exports = {
   getEvents,
   getEvent,
+  getEventMembers,
+  getEventPosts,
   setEvent,
   updateEvent,
   updateEventAdmin,

@@ -6,8 +6,9 @@ import Logo from "../images/logo.svg";
 import { useForm } from "react-hook-form";
 import { useSelector, useDispatch } from "react-redux";
 import { login, reset } from "../features/auth/authSlice";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import LoadingSpinner from "../components/LoadingSpinner";
+import { getEvents } from "../features/events/eventSlice";
+import { getEventPosts } from "../features/posts/postsSlice";
 
 const LoginScreen = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -21,12 +22,10 @@ const LoginScreen = ({ navigation }) => {
       alert(message);
     }
     if (isSuccess) {
-      navigation.navigate("Dashboard", { screen: "Dashboard" });
+      navigation.navigate("FeedScreen", { screen: "FeedScreen" });
     }
     dispatch(reset());
   }, [user, isError, isSuccess, isLoading, dispatch]);
-
- 
 
   const handleLogin = (data) => {
     dispatch(login(data));

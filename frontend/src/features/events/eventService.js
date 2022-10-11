@@ -1,5 +1,5 @@
 import axios from "axios";
-const API_URL = "http://10.0.2.2:5000";
+const API_URL = "http://192.168.0.12:5000";
 // create new event
 
 const createEvent = async (eventData, token) => {
@@ -31,10 +31,21 @@ const getOneEvent = async (eventData, token) => {
       Authorization: "Bearer " + token,
     },
   };
-  const response = await axios.get(API_URL + "/api/events/" + eventData, config);
+  const response = await axios.get(
+    API_URL + "/api/events/" + eventData,
+    config
+  );
 
   return response.data;
 };
+
+const getEventMembers = async (eventData) => {
+  const response = await axios.get(
+    API_URL + "/api/events/" + eventData + "/members"
+  );
+  return response.data;
+};
+
 const updateEvent = async (eventData, eventId, token) => {
   const config = {
     headers: {
@@ -66,6 +77,7 @@ const eventService = {
   createEvent,
   getEvents,
   getOneEvent,
+  getEventMembers,
   removeEvent,
   updateEvent,
 };

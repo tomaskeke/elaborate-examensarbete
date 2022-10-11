@@ -4,6 +4,8 @@ import eventService from "./eventService";
 const initialState = {
   events: [],
   event: {},
+  posts: [],
+  members: [],
   isError: false,
   isLoading: false,
   isSuccess: false,
@@ -52,6 +54,23 @@ export const getOneEvent = createAsyncThunk(
     try {
       const token = thunkAPI.getState().auth.user.token;
       return await eventService.getOneEvent(eventData, token);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+export const getEventMembers = createAsyncThunk(
+  "events/members",
+  async (eventData, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token;
+      return await eventService.getEventMembers(eventData);
     } catch (error) {
       const message =
         (error.response &&
@@ -115,11 +134,13 @@ export const eventSlice = createSlice({
       })
       .addCase(createEvent.fulfilled, (state, action) => {
         state.isLoading = false;
+        state.isError = false;
         state.isSuccess = true;
         state.events.push(action.payload);
       })
       .addCase(createEvent.rejected, (state, action) => {
         state.isLoading = false;
+        state.isSuccess = false;
         state.isError = true;
         state.message = action.payload;
       })
@@ -134,6 +155,7 @@ export const eventSlice = createSlice({
       })
       .addCase(getEvents.rejected, (state, action) => {
         state.isLoading = false;
+        state.isSuccess = false;
         state.isError = true;
         state.message = action.payload;
       })
@@ -149,6 +171,7 @@ export const eventSlice = createSlice({
       })
       .addCase(removeEvent.rejected, (state, action) => {
         state.isLoading = false;
+        state.isSuccess = false;
         state.isError = true;
         state.message = action.payload;
       })
@@ -164,6 +187,7 @@ export const eventSlice = createSlice({
       .addCase(updateEvent.rejected, (state, action) => {
         state.isLoading = false;
         state.isUpdated = false;
+        state.isSuccess = false;
         state.isError = true;
         state.message = action.payload;
       })
@@ -178,6 +202,22 @@ export const eventSlice = createSlice({
       })
       .addCase(getOneEvent.rejected, (state, action) => {
         state.isLoading = false;
+        state.isSuccess = false;
+        state.isError = true;
+        state.message = action.payload;
+      })
+      .addCase(getEventMembers.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getEventMembers.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+        state.members = action.payload;
+      })
+      .addCase(getEventMembers.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = false;
         state.isError = true;
         state.message = action.payload;
       });

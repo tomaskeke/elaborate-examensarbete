@@ -1,15 +1,20 @@
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import EventsScreen from "../../screens/EventScreens/EventsScreen";
 import SettingsScreen from "../../screens/SettingsScreen";
-import FeedScreen from "../../screens/FeedScreen";
+import CreateEventScreen from "../../screens/CreateEventScreen";
 import React from "react";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import Constants from "expo-constants";
 
 const Tab = createMaterialTopTabNavigator();
 
 const ProfileTabNav = () => {
   return (
     <Tab.Navigator
+      initialRouteName="Events"
+      style={{
+        paddingTop: Constants.statusBarHeight,
+      }}
       screenOptions={({ route }) => ({
         tabBarStyle: { height: 40 },
         tabBarIndicatorStyle: {
@@ -26,15 +31,13 @@ const ProfileTabNav = () => {
           } else if (route.name === "Settings") {
             iconName = focused ? "settings" : "settings-outline";
           }
-
-          // You can return any component that you like here!
           return <Ionicons name={iconName} size={16} color={color} />;
         },
         tabBarActiveTintColor: "#0e7490",
         tabBarInactiveTintColor: "#9ca3af",
       })}
     >
-      <Tab.Screen name="Feed" component={FeedScreen} />
+      <Tab.Screen name="Feed" component={CreateEventScreen} />
       <Tab.Screen name="Events" component={EventsScreen} />
       <Tab.Screen name="Settings" component={SettingsScreen} />
     </Tab.Navigator>

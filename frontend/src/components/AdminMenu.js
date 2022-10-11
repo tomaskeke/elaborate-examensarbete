@@ -14,14 +14,17 @@ const AdminMenu = ({ item, setShowModal, showModal }) => {
     if (isSuccess) {
       dispatch(getEvents());
       Toast.show({
-        render: () => {
+        render: ({ id }) => {
+          console.log(id);
           return (
             <CustomToast
+              bg="emerald.600"
               title={"Successfully deleted event!"}
               description={`Deleted ${item.title}`}
               variant={"solid"}
               isClosable={true}
-              id={1}
+              Toast={Toast}
+              id={id}
             />
           );
         },

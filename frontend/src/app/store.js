@@ -4,6 +4,7 @@ import { combineReducers } from "redux";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import authReducer from "../features/auth/authSlice";
 import eventReducer from "../features/events/eventSlice";
+import postReducer from "../features/posts/postsSlice";
 
 const persistConfig = {
   key: "root",
@@ -14,6 +15,7 @@ const persistConfig = {
 const reducer = combineReducers({
   auth: authReducer,
   events: eventReducer,
+  posts: postReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, reducer);

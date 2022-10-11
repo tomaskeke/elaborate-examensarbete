@@ -3,6 +3,8 @@ const router = express.Router();
 const {
   getEvents,
   getEvent,
+  getEventMembers,
+  getEventPosts,
   setEvent,
   updateEvent,
   updateEventAdmin,
@@ -20,6 +22,8 @@ router
   .get(getEvent)
   .put(protect, updateEvent)
   .delete(protect, deleteEvent);
+router.route("/:id/members").get(getEventMembers);
+router.route("/:id/eventposts").get(getEventPosts);
 router.route("/:id/addadmin").put(protect, updateEventAdmin);
 router.route("/:id/addmember").put(protect, updateEventMember);
 router.route("/:id/removemember").put(protect, deleteEventMember);

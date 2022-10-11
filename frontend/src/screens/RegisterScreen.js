@@ -22,7 +22,7 @@ const RegisterScreen = ({ navigation }) => {
       alert(message);
     }
     if (isSuccess) {
-      navigation.navigate("Dashboard", { screen: "Dashboard" });
+      navigation.navigate("Home", { screen: "Home" });
     }
     dispatch(reset());
   }, [user, isError, isSuccess, isLoading, dispatch]);

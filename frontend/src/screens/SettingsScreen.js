@@ -3,6 +3,7 @@ import { reset, logout } from "../features/auth/authSlice";
 import { resetEvents } from "../features/events/eventSlice";
 import { useSelector, useDispatch } from "react-redux";
 import React from "react";
+import { resetPosts } from "../features/posts/postsSlice";
 
 const SettingsScreen = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -11,6 +12,7 @@ const SettingsScreen = ({ navigation }) => {
     dispatch(logout());
     dispatch(reset());
     dispatch(resetEvents());
+    dispatch(resetPosts());
     navigation.navigate("Home");
     if (isError) {
       console.log(message);

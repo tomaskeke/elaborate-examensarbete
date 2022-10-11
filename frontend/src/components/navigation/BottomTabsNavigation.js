@@ -1,7 +1,7 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import React from "react";
 import LoginScreen from "../../screens/LoginScreen";
-import Home from "../../screens/Home";
+import FeedScreen from "../../screens/FeedScreen";
 import RegisterScreen from "../../screens/RegisterScreen";
 import ProfileScreen from "../../screens/ProfileScreen";
 import { Ionicons } from "@expo/vector-icons";
@@ -32,7 +32,7 @@ const BottomTabsNavigation = () => {
         tabBarInactiveTintColor: "#9ca3af",
       })}
     >
-      <Tab.Screen name="Home" component={Home} />
+      <Tab.Screen name="Home" component={FeedScreen} />
       {user == null ? (
         <>
           <Tab.Screen name="Login" component={LoginScreen} />

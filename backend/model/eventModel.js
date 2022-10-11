@@ -26,9 +26,16 @@ const eventSchema = mongoose.Schema(
       type: Array,
       default: [],
     },
-    created_At: {
-      type: Date,
+    likes: {
+      type: Array,
+      default: [],
     },
+    posts: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Post",
+      },
+    ],
   },
   {
     timestamps: true,
