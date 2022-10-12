@@ -5,7 +5,7 @@ import { store } from "./src/app/store";
 import { NavigationContainer } from "@react-navigation/native";
 import { NativeBaseProvider } from "native-base";
 import { StatusBar } from "expo-status-bar";
-import BottomTabsNavigation from "./src/components/navigation/BottomTabsNavigation";
+import CheckLoggedIn from "./src/screens/CheckLoggedIn"
 
 let persistor = persistStore(store);
 
@@ -15,8 +15,8 @@ export default function App() {
       <PersistGate persistor={persistor}>
         <NativeBaseProvider>
           <StatusBar style="dark"/>
-          <NavigationContainer>
-            <BottomTabsNavigation />
+          <NavigationContainer> 
+            <CheckLoggedIn />
           </NavigationContainer>
         </NativeBaseProvider>
       </PersistGate>

@@ -1,22 +1,21 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 import { Box, FlatList, Text, Button, ScrollView, View } from "native-base";
 import { useDispatch, useSelector } from "react-redux";
-import { getEvents, resetEvents } from "../../features/events/eventSlice";
+import { getEvents, resetEventStates } from "../../features/events/eventSlice";
 import { reset } from "../../features/auth/authSlice";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import EventCard from "../../components/EventCard";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useHeaderHeight } from "@react-navigation/elements";
+
 
 const MyEventsScreen = ({ navigation, route }) => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
-  const { events, isLoading, isUpdated, isError, message } = useSelector(
+  const { events, isLoading, isSuccess, isUpdated, isError, message } = useSelector(
     (state) => state.events
   );
   const [showModal, setShowModal] = useState(false);
-  const headerHeight = useHeaderHeight();
-  useEffect(() => {
+  useFocusEffect(React.useCallback(() => {
     if (isError) {
       console.log(message);
     }
@@ -24,14 +23,11 @@ const MyEventsScreen = ({ navigation, route }) => {
     if (!user) {
       navigation.navigate("LoginScreen");
     }
-    if (!isError) {
-      dispatch(getEvents());
-    }
-
+    dispatch(getEvents())
     return () => {
       dispatch(reset());
     };
-  }, [user, isError, isUpdated, dispatch]);
+  }, [user, isError, isUpdated, dispatch]))
 
   if (isLoading) {
     return <LoadingSpinner />;

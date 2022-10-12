@@ -1,30 +1,23 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import React from "react";
-import LoginScreen from "../../screens/LoginScreen";
 import FeedScreen from "../../screens/FeedScreen";
-import RegisterScreen from "../../screens/RegisterScreen";
-import ProfileScreen from "../../screens/ProfileScreen";
+import HomeScreen from "../../screens/HomeScreen";
 import { Ionicons } from "@expo/vector-icons";
-import { useSelector } from "react-redux";
+
 
 const Tab = createBottomTabNavigator();
 
 const BottomTabsNavigation = () => {
-  const { user } = useSelector((state) => state.auth);
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
-          if (route.name === "Home") {
-            iconName = focused ? "md-home" : "md-home-outline";
-          } else if (route.name === "Login") {
-            iconName = focused ? "person" : "person-outline";
-          } else if (route.name === "Register") {
-            iconName = focused ? "person-add" : "person-add-outline";
-          } else if (route.name === "Profile") {
-            iconName = focused ? "person" : "person-outline";
+          if (route.name === "Feed") {
+            iconName = focused ? "ios-newspaper" : "ios-newspaper-outline";
+          } else if (route.name === "Home") {
+            iconName = focused ? "ios-home" : "ios-home-outline";
           }
           return <Ionicons name={iconName} size={size} color={color} />;
         },
@@ -32,17 +25,8 @@ const BottomTabsNavigation = () => {
         tabBarInactiveTintColor: "#9ca3af",
       })}
     >
-      <Tab.Screen name="Home" component={FeedScreen} />
-      {user == null ? (
-        <>
-          <Tab.Screen name="Login" component={LoginScreen} />
-          <Tab.Screen name="Register" component={RegisterScreen} />
-        </>
-      ) : (
-        <>
-          <Tab.Screen name="Profile" component={ProfileScreen} />
-        </>
-      )}
+      <Tab.Screen name="Feed" component={FeedScreen} />
+      <Tab.Screen name="Home" component={HomeScreen} />
     </Tab.Navigator>
   );
 };

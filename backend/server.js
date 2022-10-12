@@ -1,15 +1,21 @@
 const express = require("express");
 const colors = require("colors");
 const dotenv = require("dotenv").config();
+const logger = require("morgan")
 const { errorHandler } = require("./middleware/errorMiddleware");
 const connectDB = require("./config/db");
 const bodyParser = require("body-parser");
 const port = process.env.PORT || 5000;
+const cors = require("cors");
+const cookieParser = require("cookie-parser");
+
 
 connectDB();
+
 const app = express();
 app.use(bodyParser.json());
-
+app.use(logger('dev'))
+app.use(cors({credentials: true, origin: process.env.FRONT_END_URL}))
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 

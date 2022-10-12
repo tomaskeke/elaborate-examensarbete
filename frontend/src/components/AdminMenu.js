@@ -11,8 +11,6 @@ const AdminMenu = ({ item, setShowModal, showModal }) => {
 
   const handleDelete = () => {
     dispatch(removeEvent(item._id));
-    if (isSuccess) {
-      dispatch(getEvents());
       Toast.show({
         render: ({ id }) => {
           console.log(id);
@@ -29,7 +27,7 @@ const AdminMenu = ({ item, setShowModal, showModal }) => {
           );
         },
       });
-    }
+
   };
   return (
     <Box w="90%" alignItems="center">

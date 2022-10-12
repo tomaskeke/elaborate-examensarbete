@@ -16,12 +16,16 @@ const CustomToast = ({
   variant,
   title,
   description,
+  errorMessage,
   isClosable,
   bg,
   ...rest
-}) => {
+}) =>
+ {
+ 
   return (
     <Alert
+      mb={5}
       maxWidth="95%"
       alignSelf="center"
       flexDirection="row"
@@ -75,6 +79,18 @@ const CustomToast = ({
           }
         >
           {description}
+        </Text>
+        <Text
+          px="6"
+          color={
+            variant === "solid"
+              ? "lightText"
+              : variant !== "outline"
+              ? "darkText"
+              : null
+          }
+        >
+          {errorMessage}
         </Text>
       </VStack>
     </Alert>

@@ -1,9 +1,9 @@
 import { Box, Button } from "native-base";
-import { reset, logout } from "../features/auth/authSlice";
-import { resetEvents } from "../features/events/eventSlice";
+import { reset, logout } from "../../features/auth/authSlice";
+import { resetEvents } from "../../features/events/eventSlice";
 import { useSelector, useDispatch } from "react-redux";
 import React from "react";
-import { resetPosts } from "../features/posts/postsSlice";
+import { resetPosts } from "../../features/posts/postsSlice";
 
 const SettingsScreen = ({ navigation }) => {
   const dispatch = useDispatch();

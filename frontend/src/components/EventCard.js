@@ -7,7 +7,7 @@ import AdminMenu from "./AdminMenu";
 const EventCard = ({ navigation, item, setShowModal, showModal }) => {
   const { user } = useSelector((state) => state.auth);
   return (
-    <Box mx={2} key={item.key}>
+    <Box mx={2} key={item._id}>
       <Box
         key={item.key}
         borderBottomWidth="1"

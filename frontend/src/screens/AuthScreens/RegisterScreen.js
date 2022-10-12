@@ -1,13 +1,13 @@
 import { NativeBaseProvider, Center, Box, Button } from "native-base";
-import LinkButton from "../components/LinkButton";
+import LinkButton from "../../components/LinkButton";
 import React, { useEffect } from "react";
-import CustomInput from "../components/CustomInput";
-import Logo from "../images/logo.svg";
+import CustomInput from "../../components/CustomInput";
+import Logo from "../../images/logo.svg";
 import { useForm } from "react-hook-form";
 import { useSelector, useDispatch } from "react-redux";
-import { reset, register } from "../features/auth/authSlice";
+import { reset, register } from "../../features/auth/authSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import LoadingSpinner from "../components/LoadingSpinner";
+import LoadingSpinner from "../../components/LoadingSpinner";
 
 const RegisterScreen = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -32,7 +32,6 @@ const RegisterScreen = ({ navigation }) => {
       alert("Passwords must match");
     } else {
       dispatch(register(data));
-      console.log(data);
     }
   };
 

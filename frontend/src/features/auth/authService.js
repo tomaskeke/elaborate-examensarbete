@@ -1,6 +1,8 @@
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-const API_URL = "http://192.168.0.12:5000";
+import {API_URL} from "@env";
+
+axios.defaults.withCredentials = true
 
 const save = async (key, value) => {
   try {

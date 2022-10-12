@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const cookieParser = require("cookie-parser")
 const {
   getEvents,
   getEvent,
@@ -15,6 +16,8 @@ const {
 } = require("../controllers/eventController");
 
 const { protect } = require("../middleware/authMiddleware");
+
+router.use(cookieParser())
 
 router.route("/").get(protect, getEvents).post(protect, setEvent);
 router

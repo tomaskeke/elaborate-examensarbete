@@ -1,6 +1,8 @@
 import axios from "axios";
-const API_URL = "http://192.168.0.12:5000";
+import {API_URL} from "@env";
 // create new event
+
+axios.defaults.withCredentials = true
 
 const createEvent = async (eventData, token) => {
   const config = {

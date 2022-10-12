@@ -126,6 +126,12 @@ export const eventSlice = createSlice({
   initialState,
   reducers: {
     resetEvents: (state) => initialState,
+    resetEventStates: (state) => {
+      (state.isError = false),
+        (state.isSuccess = false),
+        (state.isLoading = false),
+        (state.message = "");
+  },
   },
   extraReducers: (builder) => {
     builder
@@ -140,7 +146,6 @@ export const eventSlice = createSlice({
       })
       .addCase(createEvent.rejected, (state, action) => {
         state.isLoading = false;
-        state.isSuccess = false;
         state.isError = true;
         state.message = action.payload;
       })
@@ -150,12 +155,11 @@ export const eventSlice = createSlice({
       .addCase(getEvents.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isError = false;
-        state.isSuccess = true;
+        state.isUpdated = true;
         state.events = action.payload;
       })
       .addCase(getEvents.rejected, (state, action) => {
         state.isLoading = false;
-        state.isSuccess = false;
         state.isError = true;
         state.message = action.payload;
       })
@@ -164,14 +168,14 @@ export const eventSlice = createSlice({
       })
       .addCase(removeEvent.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.isSuccess = true;
+        state.isError = false;
+        state.isUpdated = true;
         state.events = state.events.filter(
           (event) => event._id !== action.payload.id
         );
       })
       .addCase(removeEvent.rejected, (state, action) => {
         state.isLoading = false;
-        state.isSuccess = false;
         state.isError = true;
         state.message = action.payload;
       })
@@ -180,14 +184,13 @@ export const eventSlice = createSlice({
       })
       .addCase(updateEvent.fulfilled, (state, action) => {
         state.isLoading = false;
+        state.isError = false;
         state.isUpdated = true;
-        state.isSuccess = true;
         state.events = action.payload;
       })
       .addCase(updateEvent.rejected, (state, action) => {
         state.isLoading = false;
         state.isUpdated = false;
-        state.isSuccess = false;
         state.isError = true;
         state.message = action.payload;
       })
@@ -196,13 +199,11 @@ export const eventSlice = createSlice({
       })
       .addCase(getOneEvent.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.isError = false;
         state.isSuccess = true;
         state.event = action.payload;
       })
       .addCase(getOneEvent.rejected, (state, action) => {
         state.isLoading = false;
-        state.isSuccess = false;
         state.isError = true;
         state.message = action.payload;
       })
@@ -211,18 +212,16 @@ export const eventSlice = createSlice({
       })
       .addCase(getEventMembers.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.isError = false;
         state.isSuccess = true;
         state.members = action.payload;
       })
       .addCase(getEventMembers.rejected, (state, action) => {
         state.isLoading = false;
-        state.isSuccess = false;
         state.isError = true;
         state.message = action.payload;
       });
   },
 });
 
-export const { resetEvents } = eventSlice.actions;
+export const { resetEvents, resetEventStates } = eventSlice.actions;
 export default eventSlice.reducer;

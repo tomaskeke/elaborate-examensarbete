@@ -1,14 +1,13 @@
 import { NativeBaseProvider, Center, Box, Button } from "native-base";
-import LinkButton from "../components/LinkButton";
-import React, { useEffect } from "react";
-import CustomInput from "../components/CustomInput";
-import Logo from "../images/logo.svg";
+import LinkButton from "../../components/LinkButton";
+import React from "react";
+import { useFocusEffect } from "@react-navigation/native";
+import CustomInput from "../../components/CustomInput";
+import Logo from "../../images/logo.svg";
 import { useForm } from "react-hook-form";
 import { useSelector, useDispatch } from "react-redux";
-import { login, reset } from "../features/auth/authSlice";
-import LoadingSpinner from "../components/LoadingSpinner";
-import { getEvents } from "../features/events/eventSlice";
-import { getEventPosts } from "../features/posts/postsSlice";
+import { login, reset } from "../../features/auth/authSlice";
+import LoadingSpinner from "../../components/LoadingSpinner";
 
 const LoginScreen = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -17,7 +16,7 @@ const LoginScreen = ({ navigation }) => {
     (state) => state.auth
   );
 
-  useEffect(() => {
+  useFocusEffect(React.useCallback(() => {
     if (isError) {
       alert(message);
     }
@@ -25,7 +24,11 @@ const LoginScreen = ({ navigation }) => {
       navigation.navigate("FeedScreen", { screen: "FeedScreen" });
     }
     dispatch(reset());
-  }, [user, isError, isSuccess, isLoading, dispatch]);
+
+    return () => {
+      dispatch(reset());
+    }
+  }, [user, isError, isSuccess, isLoading, dispatch]));
 
   const handleLogin = (data) => {
     dispatch(login(data));
@@ -62,7 +65,7 @@ const LoginScreen = ({ navigation }) => {
           <Button size="sm" variant="ghost">
             Forgot password?
           </Button>
-          <LinkButton to={{ screen: "Register" }} size="sm" variant="ghost">
+          <LinkButton to={{ screen: "RegisterScreen" }} size="sm" variant="ghost">
             Register new account
           </LinkButton>
         </Center>

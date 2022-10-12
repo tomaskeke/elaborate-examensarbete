@@ -2,10 +2,11 @@ import { Box, Center, ScrollView, Text } from "native-base";
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Constants from "expo-constants";
-import { getEvents, resetEvents } from "../features/events/eventSlice";
+import { getEvents, resetEvents} from "../features/events/eventSlice";
 import CustomSelect from "../components/CustomSelect";
 import FeedCard from "../components/FeedCard";
 import { resetPosts, getEventPosts } from "../features/posts/postsSlice";
+import { fullReset } from "../features/auth/authSlice";
 
 const API_URL = "http://10.0.2.2:5000";
 
@@ -18,7 +19,8 @@ export default function FeedScreen({ navigation }) {
 
   React.useEffect(() => {
     if (!user) {
-      resetEvents();
+      dispatch(fullReset())
+      navigation.navigate("LoginScreen")
     }
     if (isSuccess) {
       dispatch(getEvents());
