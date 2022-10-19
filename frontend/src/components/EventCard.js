@@ -34,8 +34,10 @@ const EventCard = ({ navigation, item, setShowModal, showModal }) => {
               color="coolGray.800"
               bold
               onPress={() =>
-                navigation.navigate("EventDetails", {
-                  itemId: item.item._id,
+                navigation.navigate("EventDetails", { 
+                 screen: "EventsScreen", 
+                 params: { itemId: item.item._id}
+                 
                 })
               }
             >

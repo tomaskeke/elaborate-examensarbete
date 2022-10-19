@@ -2,8 +2,6 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {API_URL} from "@env";
 
-axios.defaults.withCredentials = true
-
 const save = async (key, value) => {
   try {
     await AsyncStorage.setItem(key, value);
@@ -46,6 +44,15 @@ export const getUser = async (userId) => {
 
   return response.data;
 };
+
+
+export const getMe = async () => {
+  const response = await axios.get(`${API_URL}/api/users/me`);
+
+  return response.data;
+}
+
+
 
 const authService = {
   register,

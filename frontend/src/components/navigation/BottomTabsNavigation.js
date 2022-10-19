@@ -3,11 +3,25 @@ import React from "react";
 import FeedScreen from "../../screens/FeedScreen";
 import HomeScreen from "../../screens/HomeScreen";
 import { Ionicons } from "@expo/vector-icons";
-
+import HomeStack from "../../screens/HomeStack";
+import { StackActions } from "@react-navigation/native";
 
 const Tab = createBottomTabNavigator();
 
 const BottomTabsNavigation = () => {
+
+  const resetTabStacksOnBlur = ({navigation}) => ({
+    blur: () => {
+      const state = navigation.getState();
+  
+      state.routes.forEach((route, tabIndex) => {
+        if (state?.index !== tabIndex && route.state?.index > 0) {
+          navigation.dispatch(StackActions.popToTop());
+        }
+      });
+    },
+  });
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -21,12 +35,14 @@ const BottomTabsNavigation = () => {
           }
           return <Ionicons name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: "#0e7490",
+        tabBarActiveTintColor: "#f9fafb",
         tabBarInactiveTintColor: "#9ca3af",
+        tabBarInactiveBackgroundColor:"#374151",
+        tabBarActiveBackgroundColor: "#374151"
       })}
     >
       <Tab.Screen name="Feed" component={FeedScreen} />
-      <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen name="Home" component={HomeStack} listeners={resetTabStacksOnBlur} />
     </Tab.Navigator>
   );
 };

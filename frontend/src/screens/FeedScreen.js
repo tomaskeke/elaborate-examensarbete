@@ -1,14 +1,13 @@
-import { Box, Center, ScrollView, Text } from "native-base";
+import { Box, ScrollView, Text, Center, View } from "native-base";
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Constants from "expo-constants";
 import { getEvents, resetEvents} from "../features/events/eventSlice";
 import CustomSelect from "../components/CustomSelect";
 import FeedCard from "../components/FeedCard";
-import { resetPosts, getEventPosts } from "../features/posts/postsSlice";
+import { resetPosts } from "../features/posts/postsSlice";
 import { fullReset } from "../features/auth/authSlice";
 
-const API_URL = "http://10.0.2.2:5000";
 
 export default function FeedScreen({ navigation }) {
   const [service, setService] = React.useState(null);
@@ -32,7 +31,7 @@ export default function FeedScreen({ navigation }) {
     };
   }, [dispatch, isSuccess]);
   return (
-    <Box>
+    <Box height="100%" backgroundColor={"coolGray.800"}>
       {user ? (
         <>
           <Box
@@ -48,20 +47,27 @@ export default function FeedScreen({ navigation }) {
               events={events}
             />
           </Box>
-          <ScrollView>
+          <View height="100%">
+         
             {service !== null && posts.length > 0 ? (
-              posts.map((post) => <FeedCard post={post} />)
+              <ScrollView>
+              {posts.map((post) => <FeedCard post={post} />)}
+              </ScrollView>
             ) : isError ? (
               <Text>{message}</Text>
             ) : (
-              <Text>No event selected.</Text>
+              <Box height="100%" alignItems="center" justifyContent="center">
+              <Text alignSelf="center" >No event selected.</Text>
+              </Box>
             )}
-          </ScrollView>
+          </View>
         </>
       ) : (
+        <Center>
         <Text style={{ paddingTop: Constants.statusBarHeight }}>
           Du behöver logga in för att se den här vyn
         </Text>
+        </Center>
       )}
     </Box>
   );

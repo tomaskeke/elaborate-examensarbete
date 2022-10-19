@@ -13,6 +13,9 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getOneEvent, getEventMembers } from "../../features/events/eventSlice";
 import { getUser, reset } from "../../features/auth/authSlice";
+import Constants from "expo-constants";
+import CustomHeaderBar from "../../components/CustomHeaderBar";
+
 const EventDetails = ({ item, navigation, route }) => {
   const dispatch = useDispatch();
   const { itemId } = route.params;
@@ -34,12 +37,15 @@ const EventDetails = ({ item, navigation, route }) => {
   return (
     <Box
       alignSelf="center"
-      style={{ backgroundColor: "#fafafa" }}
+      backgroundColor={"coolGray.800"}
+      height="100%"
+      style={{
+        paddingTop: Constants.statusBarHeight
+      }}
       p={3}
       borderRadius={3}
-      my={3}
-      maxWidth="90%"
     >
+    <CustomHeaderBar navigation={navigation} goBack="one" />
       <Center>
         <HStack w="100%">
       

@@ -8,6 +8,7 @@ const API_URL = "http://192.168.0.12:5000";
 const FeedCard = ({ post }) => {
   const [userName, setUserName] = React.useState("");
   const { events } = useSelector((state) => state.events);
+  const { user } = useSelector((state) => state.auth)
   // finds event in which post is made
   const findTitle = (value) => {
     return value._id === post.event;
@@ -25,6 +26,8 @@ const FeedCard = ({ post }) => {
 
   return (
     <View w="100%">
+    { user &&
+    <>
       <Box
         style={{
           height: 50,
@@ -60,6 +63,8 @@ const FeedCard = ({ post }) => {
           </Text>
         </Box>
       </Box>
+      </>
+    }
     </View>
   );
 };

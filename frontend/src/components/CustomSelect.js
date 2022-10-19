@@ -16,17 +16,20 @@ const CustomSelect = ({ events, service, setService }) => {
     <Center>
       <Box maxW={300}>
         <Select
+          borderColor="coolGray.700"
+          color="coolGray.700"
           selectedValue={service}
           minWidth={200}
           accessibilityLabel="Choose event"
           placeholder="Choose event"
+          placeholderTextColor="coolGray.500"
           _selectedItem={{
-            bg: "teal.600",
-            endIcon: <CheckIcon size="3" />,
+            bg: "coolGray.400",
+            endIcon: <CheckIcon size="3"/>,
           }}
           onValueChange={(itemValue) => setService(itemValue)}
         >
-          {events &&
+          {events.length > 0 &&
             events.map((event) => (
               <Select.Item label={event.title} value={event._id} />
             ))}

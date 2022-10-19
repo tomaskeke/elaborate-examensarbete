@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import { useFocusEffect } from "@react-navigation/native";
-import { Box, FlatList, Text, Button, ScrollView, View } from "native-base";
+import { Box, FlatList, Text, View, Center } from "native-base";
 import { useDispatch, useSelector } from "react-redux";
 import { getEvents, resetEventStates } from "../../features/events/eventSlice";
 import { reset } from "../../features/auth/authSlice";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import EventCard from "../../components/EventCard";
+import Constants from "expo-constants"
+import CustomHeaderBar from "../../components/CustomHeaderBar";
 
 
 const MyEventsScreen = ({ navigation, route }) => {
@@ -34,6 +36,10 @@ const MyEventsScreen = ({ navigation, route }) => {
   }
 
   return (
+    <Box height="100%" backgroundColor={"coolGray.800"} style={{
+      paddingTop: Constants.statusBarHeight
+    }}>
+    <CustomHeaderBar navigation={navigation} goBack="top" />
     <View
       style={{
         flex: 1,
@@ -61,9 +67,12 @@ const MyEventsScreen = ({ navigation, route }) => {
           )}
         />
       ) : (
+        <Center>
         <Text>No events</Text>
+        </Center>
       )}
     </View>
+    </Box>
   );
 };
 export default MyEventsScreen;

@@ -1,4 +1,4 @@
-import { NativeBaseProvider, Center, Box, Button } from "native-base";
+import { NativeBaseProvider, Center, Box, Button, View } from "native-base";
 import LinkButton from "../../components/LinkButton";
 import React from "react";
 import { useFocusEffect } from "@react-navigation/native";
@@ -38,7 +38,7 @@ const LoginScreen = ({ navigation }) => {
     return <LoadingSpinner />;
   }
   return (
-    <>
+    <View backgroundColor="coolGray.800" height="100%">
       <NativeBaseProvider>
         <Center flex={1} px="3">
           <Box>
@@ -59,18 +59,18 @@ const LoginScreen = ({ navigation }) => {
             placeholder="Password"
             pw={true}
           />
-          <Button w="90%" my={2} onPress={handleSubmit(handleLogin)}>
+          <Button w="90%"  height="50" backgroundColor="success.800" _pressed={{ backgroundColor: "success.900"}} my={2} onPress={handleSubmit(handleLogin)}>
             Login
           </Button>
-          <Button size="sm" variant="ghost">
+          <Button size="xs" variant="ghost" _text={{color: "coolGray.300"}} _pressed={{ backgroundColor: "coolGray.700"}}>
             Forgot password?
           </Button>
-          <LinkButton to={{ screen: "RegisterScreen" }} size="sm" variant="ghost">
+          <LinkButton to={{ screen: "RegisterScreen" }}  _text={{color: "coolGray.300"}} _pressed={{ backgroundColor: "coolGray.700"}} size="xs" variant="ghost">
             Register new account
           </LinkButton>
         </Center>
       </NativeBaseProvider>
-    </>
+    </View>
   );
 };
 

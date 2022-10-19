@@ -1,5 +1,5 @@
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import EventsScreen from "../../screens/EventScreens/EventsScreen";
+import EventsScreen from "../../screens/EventScreens/EventsStack";
 import SettingsScreen from "../../screens/AuthScreens/SettingsScreen";
 import CreateEventScreen from "../../screens/EventScreens/CreateEventScreen";
 import React from "react";

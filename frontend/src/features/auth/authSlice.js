@@ -14,6 +14,7 @@ const user = getUserFromAsyncStorage("user");
 const initialState = {
   user: user ? user : null,
   inspectUser: {},
+  friendsList: [],
   isError: false,
   isSuccess: false,
   isLoading: false,
