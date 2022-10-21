@@ -1,7 +1,7 @@
 import { Select, Box, CheckIcon, Center } from "native-base";
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { getEventPosts } from "../features/posts/postsSlice";
+import { getEventPosts } from "../../features/posts/postsSlice";
 
 const CustomSelect = ({ events, service, setService }) => {
   const dispatch = useDispatch();

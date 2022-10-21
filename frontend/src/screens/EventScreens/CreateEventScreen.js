@@ -1,27 +1,15 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useFocusEffect } from "@react-navigation/native";
-import {
-  VStack,
-  Box,
-  FormControl,
-  Button,
-  useToast,
-  TextArea,
-  Input,
-} from "native-base";
-
+import { Box, useToast } from "native-base";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  resetEventStates,
-  createEvent,
-} from "../../features/events/eventSlice";
-import CustomToast from "../../components/CustomToast";
-import CustomHeaderBar from "../../components/CustomHeaderBar";
+import { resetEventStates } from "../../features/events/eventSlice";
+import CustomToast from "../../components/CustomComponents/CustomToast";
+import CustomHeaderBar from "../../components/headerbars/CustomHeaderBar";
 import Constants from "expo-constants";
 
-import CustomTabs from "../../components/CustomTabs";
+import CustomTabs from "../../components/CustomComponents/CustomTabs";
 
-const FeedScreen = ({ navigation }) => {
+const CreateEventScreen = ({ navigation }) => {
   const dispatch = useDispatch();
   const Toast = useToast();
   const [formData, setFormData] = React.useState({
@@ -33,6 +21,7 @@ const FeedScreen = ({ navigation }) => {
     state: "",
     postal_code: "",
     country: "",
+    date: null,
   });
   const [percentOne, setPercentOne] = React.useState(0);
   const [percentTwo, setPercentTwo] = React.useState(0);
@@ -40,48 +29,6 @@ const FeedScreen = ({ navigation }) => {
   const [percentFour, setPercentFour] = React.useState(0);
 
   const { isError, isSuccess, message } = useSelector((state) => state.events);
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    dispatch(createEvent(formData));
-    setFormData({
-      title: "",
-      desc: "",
-      street_number: "",
-      street_name: "",
-      city: "",
-      state: "",
-      postal_code: "",
-      country: "",
-    });
-  };
-
-  const validation = () => {
-    let titleValidated = false;
-    let descValidated = false;
-    if (formData.title !== null && formData.title.length >= 3) {
-      titleValidated = true;
-      setPercentOne(50);
-    } else if (
-      formData.title === null ||
-      (formData.title.length < 3 && !descValidated)
-    ) {
-      setPercentOne(0);
-    }
-    if (formData.desc !== null && formData.desc.length >= 3) {
-      descValidated = true;
-      setPercentOne(50);
-    } else if (
-      formData.desc === null ||
-      (formData.desc.length < 3 && !titleValidated)
-    ) {
-      setPercentOne(0);
-    }
-
-    if (titleValidated && descValidated) {
-      setPercentOne(100);
-    }
-  };
 
   useFocusEffect(
     React.useCallback(() => {
@@ -132,9 +79,6 @@ const FeedScreen = ({ navigation }) => {
     <Box
       backgroundColor={"coolGray.800"}
       height="100%"
-      style={{
-        paddingTop: Constants.statusBarHeight,
-      }}
     >
       <CustomHeaderBar navigation={navigation} goBack={"one"} />
       <CustomTabs
@@ -144,15 +88,14 @@ const FeedScreen = ({ navigation }) => {
         setPercentTwo={setPercentTwo}
         setPercentThree={setPercentThree}
         setPercentFour={setPercentFour}
-        percentage={{
-          percentOne: percentOne,
-          percentTwo: percentTwo,
-          PercentThree: percentThree,
-          PercentFour: percentFour,
-        }}
-      />
-      </Box>
+        percentOne={percentOne}
+        percentTwo={percentTwo}
+        percentThree={percentThree}
+        percentFour={percentFour}
+          
+        />
+    </Box>
   );
 };
 
-export default FeedScreen;
+export default CreateEventScreen;

@@ -1,16 +1,21 @@
 import {
-  ScrollView,
   View,
   Box,
-  VStack,
   Button,
   Text,
   Input,
   Icon,
+  Modal,
+  KeyboardAvoidingView,
 } from "native-base";
-import GooglePlacesInput from "../../../components/googleAutocomplete";
+import GooglePlacesInput from "../../../components/CustomComponents/googleAutocomplete";
+import CustomToggleBar from "../../../components/CustomComponents/CustomToggleBar";
+import CustomDateTimePicker from "../../../components/CustomComponents/CustomDateTimePicker";
+import InfoCard from "../../../components/Cards/InfoCard";
 import React, { useState } from "react";
-import { Ionicons } from "@expo/vector-icons";
+import { Platform, LogBox } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
+
 const createEventLocation = ({
   formData,
   setFormData,
@@ -18,49 +23,56 @@ const createEventLocation = ({
   setPercentTwo,
   jumpTo,
 }) => {
-  const [streetValidated, setStreetValidated] = useState(false);
-  const [cityValidated, setCityValidated] = useState(false);
-  const [stateValidated, setStateValidated] = useState(false);
-  const [countryValidated, setCountryValidated] = useState(false);
+  const [validation, setValidation] = useState({
+    street_name: false,
+    city: false,
+    state: false,
+    country: false,
+  });
   const [selfService, setSelfService] = useState(false);
+  const [timeAndDate, setTimeAndDate] = useState(false);
+  const [place, setPlace] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
+  const [hideAll, setHideAll] = useState(false);
 
-  const setProgress = () => {
-    let validationObjects = [
-      streetValidated,
-      stateValidated,
-      cityValidated,
-      countryValidated,
-    ];
-    const filtered = validationObjects.filter((obj) => obj === true);
-    filtered.length === 0 && setPercentTwo(0);
-    filtered.length === 1 && setPercentTwo(25);
-    filtered.length === 2 && setPercentTwo(50);
-    filtered.length === 3 && setPercentTwo(75);
-    filtered.length === 4 && setPercentTwo(100);
+  LogBox.ignoreLogs(["VirtualizedLists should never be nested"]);
+
+  // validation
+  const validate = (name, value) => {
+    setValidation({ ...validation, [name]: value.length > 2 || false });
   };
 
-  const validate = () => {
-    formData.street_name?.length > 2 && formData.street_name !== null
-      ? !streetValidated && setStreetValidated(true)
-      : streetValidated && setStreetValidated(false);
-    formData.city?.length > 2 && formData.city !== null
-      ? !cityValidated && setCityValidated(true)
-      : cityValidated && setCityValidated(false);
-    formData.state?.length > 2 && formData.state !== null
-      ? !stateValidated && setStateValidated(true)
-      : stateValidated && setStateValidated(false);
-    formData.country?.length > 2 && formData.country !== null
-      ? !countryValidated && setCountryValidated(true)
-      : countryValidated && setCountryValidated(false);
-    setProgress();
-  };
+  const validateFormData = () => {
+    const { street_name, city, state, country, date } = formData;
+    const validateDate =
+      date === null ? false : date instanceof Date && !isNaN(date);
+    validateDate === true ? setPercentTwo(+20) : null;
 
+    const locationObjects = { street_name, city, state, country };
+
+    const validated = Object.values(locationObjects).map(
+      (item) => item !== undefined && item.length > 2
+    );
+    for (let i = 0; i < validated.length; i++) {
+      if (validated[i] === true && percentTwo !== 120) {
+        setPercentTwo((i + 2) * 20);
+      }
+    }
+  };
+  const options = {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  };
+  const dateFormat = formData?.date?.toLocaleDateString("sv-SE", options);
+
+  // inputFields to render
   const inputFields = [
     {
       name: "street_name",
       onChangeText: (value) => {
         setFormData({ ...formData, street_name: value });
-        validate();
       },
       placeholder: "Gata, t.ex Storgatan",
     },
@@ -68,16 +80,14 @@ const createEventLocation = ({
       name: "street_number",
       onChangeText: (value) => {
         setFormData({ ...formData, street_number: value });
-        validate();
       },
       placeholder: "Gatunummer, t.ex 4D",
     },
-
     {
       name: "city",
       onChangeText: (value) => {
         setFormData({ ...formData, city: value });
-        validate();
+        validate("city", value);
       },
       placeholder: "Stad, t.ex Växjö",
     },
@@ -85,7 +95,6 @@ const createEventLocation = ({
       name: "postal_code",
       onChangeText: (value) => {
         setFormData({ ...formData, postal_code: value });
-        validate();
       },
       placeholder: "Postkod, t.ex 352 33",
     },
@@ -93,7 +102,7 @@ const createEventLocation = ({
       name: "state",
       onChangeText: (value) => {
         setFormData({ ...formData, state: value });
-        validate();
+        validate("state", value);
       },
       placeholder: "Län, t.ex Kronobergs län",
     },
@@ -102,101 +111,172 @@ const createEventLocation = ({
       name: "country",
       onChangeText: (value) => {
         setFormData({ ...formData, country: value });
-        validate();
+        validate("country", value);
       },
       placeholder: "Land, t.ex Sverige",
     },
   ];
 
+  useFocusEffect(
+    React.useCallback(() => {
+      if (place || timeAndDate) {
+        validateFormData();
+      }
+    }, [place, timeAndDate])
+  );
+
   return (
-    <View>
+    // 302.5454406738281 scrollView
+    <View height="100%">
       <Box alignItems="center">
-        <Box
-          width={300}
-          mt={5}
-          p={3}
-          borderRadius={3}
-          backgroundColor="coolGray.700"
-          alignItems="center"
-        >
-          <Icon
-            as={Ionicons}
-            name="ios-location"
-            color="#a1a1aa"
-            alignSelf="center"
-            size="2xl"
-          />
-          <Text textAlign="left" fontSize="2xs">
-            Här anger du information om var evenemanget kommer hållas. Detta
-            inkluderar Adress, län och land
-          </Text>
-        </Box>
-       
-        <Box alignItems="flex-start" width="300">
-          <Button variant="link" onPress={() => setSelfService(!selfService)}>
-            { !selfService ? "Fyll i själv" : "Autofill"}
-          </Button>
-        </Box>
-        {selfService && (
-          <Box alignItems={"center"}>
-            <VStack>
-              {inputFields.map((field, index) => {
-                return (
-                  <Input
-                    value={formData[field.name]}
-                    key={field.name}
-                    name={field.name}
-                    width="300"
-                    height="44"
-                    mb={4}
-                    onChangeText={field.onChangeText}
-                    placeholder={field.placeholder}
-                    backgroundColor="coolGray.700"
-                    borderWidth="0"
-                    color="lightText"
-                    placeholderTextColor="coolGray.500"
-                    _focus={{
-                      color: "coolGray.50",
-                      borderColor: "lightText",
-                      backgroundColor: "coolGray.600",
-                    }}
-                  />
-                );
-              })}
-            </VStack>
-          </Box>
-        )}
-        {!selfService && (
+        {!hideAll && (
           <>
-            <Box height="60" alignItems="center">
-              <GooglePlacesInput
-                setFormData={setFormData}
-                formData={formData}
-                onChangeText={validate()}
+            <InfoCard
+              icon="ios-location"
+              info="Här anger du information om var evenemanget kommer hållas. Detta
+            inkluderar tid, datum och plats."
+            />
+            <Box flexDir="column">
+              <CustomToggleBar
+                icon="ios-calendar"
+                desc="Tid & Datum"
+                state={timeAndDate}
+                setState={setTimeAndDate}
               />
-            </Box>
-            <Box justifyContent="center" flexDir="row">
-              {formData.street_name?.length > 2 ? (
-                <Text fontSize="2xs">{formData.street_name}, </Text>
-              ) : (
-                <></>
-              )}
-              {formData.street_number?.length > 0 && (
-                <Text fontSize="2xs">{formData.street_number}, </Text>
-              )}
-              {formData.postal_code?.length > 2 && (
-                <Text fontSize="2xs">{formData.postal_code}, </Text>
-              )}
-              {formData.city?.length > 2 && (
-                <Text fontSize="2xs">{formData.city}, </Text>
-              )}
-              {formData.state?.length > 2 && (
-                <Text fontSize="2xs">{formData.state}, </Text>
-              )}
-              {formData.country?.length > 2 && (
-                <Text fontSize="2xs">{formData.country}</Text>
+              {timeAndDate && (
+                <Box
+                  alignItems="center"
+                  justifyContent="center"
+                  flexDir="column"
+                >
+                  <CustomDateTimePicker
+                    setFormData={setFormData}
+                    formData={formData}
+                    mode="date"
+                    icon="ios-calendar"
+                  />
+                  <CustomDateTimePicker
+                    setFormData={setFormData}
+                    formData={formData}
+                    mode="time"
+                    icon="ios-time"
+                  />
+                </Box>
               )}
             </Box>
+          </>
+        )}
+        <CustomToggleBar
+          icon="ios-location"
+          desc="Plats"
+          state={place}
+          setState={setPlace}
+          setHideAll={setHideAll}
+          hideAll={hideAll}
+        />
+        {place && (
+          <>
+            {!selfService && (
+              <>
+                <View mt={2} width="90%" height={isFocused ? "400" : "60"}>
+                  {!selfService && (
+                    <Text mb={2} fontSize="sm" alignSelf="flex-start">
+                      Ange adress och välj ett alternativ i fältet under...
+                    </Text>
+                  )}
+                  <KeyboardAvoidingView
+                    flex={1}
+                    backgroundColor="coolGray.800"
+                    h={{
+                      base: "400px",
+                      lg: "auto",
+                    }}
+                    behavior={Platform.OS === "ios" ? "padding" : "padding"}
+                  >
+                    <GooglePlacesInput
+                      setFormData={setFormData}
+                      formData={formData}
+                      setIsFocused={setIsFocused}
+                      isFocused={isFocused}
+                      percentTwo={percentTwo}
+                      setPercentTwo={setPercentTwo}
+                      setHideAll={setHideAll}
+                      hideAll={hideAll}
+                    />
+                  </KeyboardAvoidingView>
+                </View>
+              </>
+            )}
+            <Box alignItems="flex-start" flexDir="row" width="90%">
+              <Text
+                underline
+                color={"coolGray.200"}
+                mt={5}
+                fontSize="sm"
+                _pressed={{ color: "coolGray.400" }}
+                onPress={() => setSelfService(!selfService)}
+              >{!selfService && "fyll i själv"}</Text>
+            </Box>
+            <>
+              {selfService && (
+                <Modal
+                  isOpen={selfService}
+                  onClose={setSelfService}
+                  avoidKeyboard
+                >
+                  <Modal.Content backgroundColor={"coolGray.800"}>
+                    <Modal.CloseButton />
+                    <Modal.Header backgroundColor={"coolGray.800"}>
+                      Fyll i adress själv
+                    </Modal.Header>
+                    <Modal.Body backgroundColor={"coolGray.800"}>
+                      {inputFields.map((field, index) => {
+                        return (
+                          <Input
+                            value={formData[field.name]}
+                            key={field.name}
+                            name={field.name}
+                            width="270"
+                            height="44"
+                            mb={4}
+                            onChangeText={field.onChangeText}
+                            placeholder={field.placeholder}
+                            backgroundColor="coolGray.700"
+                            borderWidth="0"
+                            color="lightText"
+                            placeholderTextColor="coolGray.500"
+                            _focus={{
+                              color: "coolGray.50",
+                              borderColor: "lightText",
+                              backgroundColor: "coolGray.600",
+                            }}
+                          />
+                        );
+                      })}
+                    </Modal.Body>
+                    <Modal.Footer backgroundColor={"coolGray.800"}>
+                      <Button.Group variant="ghost" space={2}>
+                        <Button
+                          onPress={() => {
+                            setSelfService(!selfService);
+                          }}
+                        >
+                          SAVE
+                        </Button>
+                        <Button
+                          onPress={() => {
+                            setSelfService(!selfService);
+                          }}
+                          colorScheme="secondary"
+                        >
+                          CLOSE
+                        </Button>
+                      </Button.Group>
+                    </Modal.Footer>
+                  </Modal.Content>
+                </Modal>
+              )}
+            </>
           </>
         )}
         <Button
@@ -204,12 +284,35 @@ const createEventLocation = ({
           onPress={() => jumpTo("third")}
           backgroundColor="success.800"
           _pressed={{ backgroundColor: "success.900" }}
-          width="300"
+          width="95%"
           alignSelf="center"
           isDisabled={percentTwo !== 100 ? true : false}
         >
-          Next
+          Nästa
         </Button>
+        <Box width="95%" mt={4} justifyContent="flex-start" flexDir="row">
+          <Text fontSize="sm">
+            {dateFormat && dateFormat}
+            {}
+          </Text>
+        </Box>
+        <Box width="95%" justifyContent="flex-start" flexDir="row">
+          {percentTwo === 100 && (
+            <>
+              <Text fontSize="sm">
+                {formData?.street_name}
+                {formData?.street_number}
+              </Text>
+              <Text fontSize="sm">{formData?.street_number}, </Text>
+              <Text fontSize="sm">{formData?.postal_code}, </Text>
+              <Text fontSize="sm">{formData?.city}, </Text>
+              <Text textAlign="left" fontSize="sm">
+                {formData?.state},{" "}
+              </Text>
+              <Text fontSize="sm">{formData.country} </Text>
+            </>
+          )}
+        </Box>
       </Box>
     </View>
   );

@@ -1,8 +1,8 @@
-import { NativeBaseProvider, Center, Box, Button, View } from "native-base";
+import { NativeBaseProvider, Center, Box, Button, View, KeyboardAvoidingView } from "native-base";
 import LinkButton from "../../components/LinkButton";
 import React from "react";
 import { useFocusEffect } from "@react-navigation/native";
-import CustomInput from "../../components/CustomInput";
+import CustomInput from "../../components/CustomComponents/CustomInput";
 import Logo from "../../images/logo.svg";
 import { useForm } from "react-hook-form";
 import { useSelector, useDispatch } from "react-redux";
@@ -38,6 +38,7 @@ const LoginScreen = ({ navigation }) => {
     return <LoadingSpinner />;
   }
   return (
+  
     <View backgroundColor="coolGray.800" height="100%">
       <NativeBaseProvider>
         <Center flex={1} px="3">
@@ -70,7 +71,7 @@ const LoginScreen = ({ navigation }) => {
           </LinkButton>
         </Center>
       </NativeBaseProvider>
-    </View>
+      </View>
   );
 };
 

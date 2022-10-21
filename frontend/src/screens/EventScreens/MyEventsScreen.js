@@ -5,9 +5,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { getEvents, resetEventStates } from "../../features/events/eventSlice";
 import { reset } from "../../features/auth/authSlice";
 import LoadingSpinner from "../../components/LoadingSpinner";
-import EventCard from "../../components/EventCard";
+import EventCard from "../../components/Cards/EventCard";
 import Constants from "expo-constants"
-import CustomHeaderBar from "../../components/CustomHeaderBar";
+import CustomHeaderBar from "../../components/headerbars/CustomHeaderBar";
 
 
 const MyEventsScreen = ({ navigation, route }) => {
@@ -36,9 +36,7 @@ const MyEventsScreen = ({ navigation, route }) => {
   }
 
   return (
-    <Box height="100%" backgroundColor={"coolGray.800"} style={{
-      paddingTop: Constants.statusBarHeight
-    }}>
+    <Box height="100%" backgroundColor={"coolGray.800"}>
     <CustomHeaderBar navigation={navigation} goBack="top" />
     <View
       style={{

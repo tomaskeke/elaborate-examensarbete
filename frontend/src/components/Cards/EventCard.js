@@ -1,8 +1,8 @@
 import { Box, Avatar, HStack, VStack, Text, Spacer, Center } from "native-base";
 import React from "react";
-import ModalComponent from "./ModalComponent";
+import ModalComponent from "../CustomComponents/ModalComponent";
 import { useDispatch, useSelector } from "react-redux";
-import AdminMenu from "./AdminMenu";
+import AdminMenu from "../CustomComponents/AdminMenu";
 
 const EventCard = ({ navigation, item, setShowModal, showModal }) => {
   const { user } = useSelector((state) => state.auth);

@@ -1,8 +1,7 @@
 import { Box, HamburgerIcon, Menu, useToast } from "native-base";
 import { Pressable } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import authService from "../features/auth/authService";
-import { removeEvent, getEvents } from "../features/events/eventSlice";
+import { removeEvent } from "../../features/events/eventSlice";
 import CustomToast from "./CustomToast";
 const AdminMenu = ({ item, setShowModal, showModal }) => {
   const dispatch = useDispatch();

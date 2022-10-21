@@ -1,7 +1,7 @@
 import { View, Text, Avatar, HStack, VStack, Divider, Box, Button, CheckIcon, CloseIcon, Icon, IconButton } from "native-base";
 import React from "react";
 import Constants from "expo-constants";
-import CustomHeaderBar from "../../components/CustomHeaderBar";
+import CustomHeaderBar from "../../components/headerbars/CustomHeaderBar";
 import { useFocusEffect } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import { getFriendsList, acceptFriendRequest, declineFriendRequest, getFriendRequests, removeFriend, getInitializedRequests, resetFriends, cancelPendingRequest} from "../../features/friends/friendsSlice";
@@ -48,9 +48,6 @@ return (
     <View
       height="100%"
       backgroundColor="coolGray.800"
-      style={{
-        paddingTop: Constants.statusBarHeight,
-      }}
     >
       <CustomHeaderBar navigation={navigation} goBack="one" />
 

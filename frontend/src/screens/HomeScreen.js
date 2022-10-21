@@ -3,7 +3,7 @@ import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Constants from "expo-constants"
 import {Ionicons} from "@expo/vector-icons"
-import CustomHomeBar from '../components/CustomHomeBar';
+import CustomHomeBar from '../components/headerbars/CustomHomeBar';
 import { useFocusEffect } from '@react-navigation/native';
 import { getFriendRequests, getFriendsList, getInitializedRequests, resetFriends } from '../features/friends/friendsSlice';
 import { resetSearch } from "../features/search/searchSlice"
@@ -42,9 +42,7 @@ const HomeScreen = ({ navigation }) => {
  
 
   return (
-    <View height="100%" backgroundColor={"coolGray.800"} style={{
-      paddingTop: Constants.statusBarHeight,
-       }}>
+    <View height="100%" backgroundColor={"coolGray.800"} >
        <CustomHomeBar navigation={navigation} />
        <Box width="100%" alignItems="center" mt={3}>
        <Box width="95%" alignItems="center">

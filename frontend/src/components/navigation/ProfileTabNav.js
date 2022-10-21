@@ -12,9 +12,6 @@ const ProfileTabNav = () => {
   return (
     <Tab.Navigator
       initialRouteName="Events"
-      style={{
-        paddingTop: Constants.statusBarHeight,
-      }}
       screenOptions={({ route }) => ({
         tabBarStyle: { height: 40 },
         tabBarIndicatorStyle: {

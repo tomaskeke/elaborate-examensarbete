@@ -5,7 +5,7 @@ import MyEventsScreen from "./MyEventsScreen";
 import CreateEventScreen from "./CreateEventScreen"
 import ProfileDetails from "./ProfileDetails";
 import { getHeaderTitle } from "@react-navigation/elements";
-import CustomHeaderBar from "../../components/CustomHeaderBar";
+import CustomHeaderBar from "../../components/headerbars/CustomHeaderBar";
 import FindFriendScreen from "../AuthScreens/FindFriendScreen";
 
 const EventsStack = () => {

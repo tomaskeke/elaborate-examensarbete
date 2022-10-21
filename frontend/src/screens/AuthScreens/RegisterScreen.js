@@ -1,15 +1,15 @@
-import { NativeBaseProvider, Center, Box, Button, Text, HStack } from "native-base";
+import { NativeBaseProvider, Center, Box, Button, Text, HStack, KeyboardAvoidingView } from "native-base";
 import LinkButton from "../../components/LinkButton";
 import React, { useEffect, useState } from "react";
-import CustomInput from "../../components/CustomInput";
+import CustomInput from "../../components/CustomComponents/CustomInput";
 import Logo from "../../images/logo.svg";
 import { useForm } from "react-hook-form";
 import { useSelector, useDispatch } from "react-redux";
 import { reset, register } from "../../features/auth/authSlice";
 import  Constants  from "expo-constants";
 import LoadingSpinner from "../../components/LoadingSpinner";
-import CustomHeaderBar from "../../components/CustomHeaderBar";
-import CustomTabs from "../../components/CustomTabs";
+import CustomHeaderBar from "../../components/headerbars/CustomHeaderBar";
+import CustomTabs from "../../components/CustomComponents/CustomTabs";
 
 const RegisterScreen = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -42,9 +42,16 @@ const RegisterScreen = ({ navigation }) => {
 
 
   return (
-    <Box backgroundColor="coolGray.800" height="100%" style={{
-      paddingTop: Constants.statusBarHeight 
-    }}>
+    <KeyboardAvoidingView
+    flex={1}
+    backgroundColor="coolGray.800"
+    h={{
+      base: "400px",
+      lg: "auto",
+    }}
+    behavior={Platform.OS === "ios" ? "padding" : "height"}
+  >
+    <Box backgroundColor="coolGray.800" height="100%">
     <CustomHeaderBar navigation={navigation} goBack="one" />
       <NativeBaseProvider>
         <Center flex={1} px="3">
@@ -103,6 +110,7 @@ const RegisterScreen = ({ navigation }) => {
         </Center>
       </NativeBaseProvider>
     </Box>
+    </KeyboardAvoidingView>
   );
 };
 

@@ -14,7 +14,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getOneEvent, getEventMembers } from "../../features/events/eventSlice";
 import { getUser, reset } from "../../features/auth/authSlice";
 import Constants from "expo-constants";
-import CustomHeaderBar from "../../components/CustomHeaderBar";
+import CustomHeaderBar from "../../components/headerbars/CustomHeaderBar";
 
 const EventDetails = ({ item, navigation, route }) => {
   const dispatch = useDispatch();
@@ -39,9 +39,6 @@ const EventDetails = ({ item, navigation, route }) => {
       alignSelf="center"
       backgroundColor={"coolGray.800"}
       height="100%"
-      style={{
-        paddingTop: Constants.statusBarHeight
-      }}
       p={3}
       borderRadius={3}
     >

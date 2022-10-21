@@ -21,7 +21,7 @@ const register = async (userData) => {
 };
 
 const login = async (userData) => {
-  const response = await axios.post(`${API_URL}/api/users/login/`, userData);
+  const response = await axios.post(`${API_URL}/api/users/login/`, userData, {headers: {'Content-Type': 'application/json'}});
 
   if (response.data) {
     save("user", JSON.stringify(response.data));

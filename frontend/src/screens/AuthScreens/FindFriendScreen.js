@@ -9,7 +9,7 @@ import {
 } from "native-base";
 import Constants from "expo-constants";
 import React from "react";
-import CustomHeaderBar from "../../components/CustomHeaderBar";
+import CustomHeaderBar from "../../components/headerbars/CustomHeaderBar";
 import { useDispatch, useSelector } from "react-redux"
 
 import { sendFriendRequest, getInitializedRequests} from "../../features/friends/friendsSlice";
@@ -41,9 +41,6 @@ const FindFriendScreen = ({ navigation }) => {
     <View
       height="100%"
       backgroundColor={"coolGray.800"}
-      style={{
-        paddingTop: Constants.statusBarHeight,
-      }}
     >
       <CustomHeaderBar navigation={navigation} goBack="one" />
       <Box width="100%" alignItems="center">

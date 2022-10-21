@@ -2,7 +2,7 @@ import { View, Text } from "native-base";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { KEY_PREFIX } from "redux-persist/es/constants";
-import { getEventPosts, resetEvents } from "../features/events/eventSlice";
+import { getEventPosts, resetEvents } from "../../features/events/eventSlice";
 
 const PostCard = ({ post }) => {
   return (

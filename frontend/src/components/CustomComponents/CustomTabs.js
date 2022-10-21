@@ -8,10 +8,10 @@ import {
 import { TabView } from "react-native-tab-view";
 import { Box, Progress, InfoIcon, Icon } from "native-base";
 import { useColorModeValue } from "native-base";
-import CreateEventInfo from "../screens/EventScreens/CreateEventTabView/CreateEventInfo";
-import CreateEventLocation from "../screens/EventScreens/CreateEventTabView/CreateEventLocation";
-import CreateEventInvites from "../screens/EventScreens/CreateEventTabView/CreateEventInvites";
-import CreateEventConfirm from "../screens/EventScreens/CreateEventTabView/CreateEventsConfirm";
+import CreateEventInfo from "../../screens/EventScreens/CreateEventTabView/CreateEventInfo";
+import CreateEventLocation from "../../screens/EventScreens/CreateEventTabView/CreateEventLocation";
+import CreateEventInvites from "../../screens/EventScreens/CreateEventTabView/CreateEventInvites";
+import CreateEventConfirm from "../../screens/EventScreens/CreateEventTabView/CreateEventsConfirm";
 import { useFonts, Inter_300Light, Inter_600SemiBold } from "@expo-google-fonts/inter";
 import { Ionicons } from "@expo/vector-icons"
 
@@ -27,13 +27,16 @@ const CustomTabs = ({
   setPercentTwo,
   setPercentThree,
   setPercentFour,
+  percentOne,
+  percentTwo,
+  percentThree,
+  percentFour,
 }) => {
   const [index, setIndex] = React.useState(0);
   const [fontsLoaded] = useFonts({
     Inter_300Light,
     Inter_600SemiBold,
   });
-
   const [routes] = React.useState([
     {
       key: "first",
@@ -62,7 +65,7 @@ const CustomTabs = ({
             setFormData={setFormData}
             setPercentOne={setPercentOne}
             jumpTo={jumpTo}
-            percentOne={percentage.percentOne}
+            percentOne={percentOne}
           />
         );
       case "second":
@@ -72,7 +75,7 @@ const CustomTabs = ({
             setFormData={setFormData}
             setPercentTwo={setPercentTwo}
             jumpTo={jumpTo}
-            percentTwo={percentage.percentTwo}
+            percentTwo={percentTwo}
 
           />
         );
@@ -83,7 +86,7 @@ const CustomTabs = ({
             setFormData={setFormData}
             setPercentThree={setPercentThree}
             jumpTo={jumpTo}
-            percentThree={percentage.percentThree}
+            percentThree={percentThree}
 
           />
         );
@@ -94,7 +97,7 @@ const CustomTabs = ({
             setFormData={setFormData}
             setPercentFour={setPercentFour}
             jumpTo={jumpTo}
-            percentFour={percentage.percentFour}
+            percentFour={percentFour}
           />
         );
     }
@@ -121,18 +124,17 @@ const CustomTabs = ({
               <Box key={i} flex={1} alignItems="center" justifyContent={"flex-end"}>
                 <Pressable
                   onPress={() => {
-                    console.log(i);
                     setIndex(i);
                   }}
                 >
                 {route.key === "first" ?
-                  <InfoIcon alignSelf="center" color={index === i ? "#e5e5e5" : "#a1a1aa"} size="lg" /> :
+                  <InfoIcon alignSelf="center" mb={2} color={index === i ? "#e5e5e5" : "#a1a1aa"} size="lg" /> :
                   route.key === "second" ?
-                  <Icon as={Ionicons} name="ios-location" color={index === i ? "#e5e5e5" : "#a1a1aa"} alignSelf="center" size="lg" /> :
+                  <Icon as={Ionicons} name="ios-location" mb={2} color={index === i ? "#e5e5e5" : "#a1a1aa"} alignSelf="center" size="lg" /> :
                   route.key === "third" ?
-                  <Icon as={Ionicons} name="people" color={index === i ? "#e5e5e5" : "#a1a1aa"} alignSelf="center" size="lg" /> :
+                  <Icon as={Ionicons} name="people" mb={2} color={index === i ? "#e5e5e5" : "#a1a1aa"} alignSelf="center" size="lg" /> :
                   route.key === "fourth" ?
-                <Icon as={Ionicons} name="ios-checkmark-done" color={index === i ? "#e5e5e5" : "#a1a1aa"} alignSelf="center" size="lg" /> :
+                <Icon as={Ionicons} name="ios-checkmark-done" mb={2} color={index === i ? "#e5e5e5" : "#a1a1aa"} alignSelf="center" size="lg" /> :
                 <></>}
                   <Animated.Text
                     style={{
@@ -151,12 +153,12 @@ const CustomTabs = ({
                     _filledTrack={{backgroundColor: "success.700", borderRadius: 0}}
                     value={
                       i === 0
-                        ? percentage.percentOne
+                        ? percentOne
                         : i === 1
-                        ? percentage.percentTwo
+                        ? percentTwo
                         : i === 2
-                        ? percentage.percentThree
-                        : i === 3 && percentage.percentFour
+                        ? percentThree
+                        : i === 3 && percentFour
                     }
                     size="xs"
                   />

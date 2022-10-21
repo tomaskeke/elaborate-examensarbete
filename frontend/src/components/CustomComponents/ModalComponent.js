@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import CustomInput from "./CustomInput";
 import CustomTextArea from "./CustomTextArea";
 import { useDispatch, useSelector } from "react-redux";
-import { updateEvent } from "../features/events/eventSlice";
+import { updateEvent } from "../../features/events/eventSlice";
 
 const ModalComponent = ({ title, showModal, setShowModal, item }) => {
   const dispatch = useDispatch();

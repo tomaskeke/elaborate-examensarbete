@@ -7,7 +7,6 @@ const connectDB = require("./config/db");
 const bodyParser = require("body-parser");
 const port = process.env.PORT || 5000;
 const cors = require("cors");
-const cookieParser = require("cookie-parser");
 
 
 connectDB();
@@ -15,7 +14,7 @@ connectDB();
 const app = express();
 app.use(bodyParser.json());
 app.use(logger('dev'))
-app.use(cors({credentials: true, origin: process.env.FRONT_END_URL}))
+app.use(cors())
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 

@@ -3,8 +3,8 @@ import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Constants from "expo-constants";
 import { getEvents, resetEvents} from "../features/events/eventSlice";
-import CustomSelect from "../components/CustomSelect";
-import FeedCard from "../components/FeedCard";
+import CustomSelect from "../components/CustomComponents/CustomSelect";
+import FeedCard from "../components/Cards/FeedCard";
 import { resetPosts } from "../features/posts/postsSlice";
 import { fullReset } from "../features/auth/authSlice";
 
@@ -36,7 +36,6 @@ export default function FeedScreen({ navigation }) {
         <>
           <Box
             style={{
-              paddingTop: Constants.statusBarHeight,
               alignItems: "flex-end",
               marginRight: 4,
             }}
@@ -64,7 +63,7 @@ export default function FeedScreen({ navigation }) {
         </>
       ) : (
         <Center>
-        <Text style={{ paddingTop: Constants.statusBarHeight }}>
+        <Text>
           Du behöver logga in för att se den här vyn
         </Text>
         </Center>
