@@ -5,8 +5,7 @@ const User = require("../model/userModel");
 const Post = require("../model/postModel");
 
 const getEventPost = asyncHandler(async (req, res) => {
-  const post = await Post.findById(req.params.postId);
-
+  const post = await Post.findById(req.params.id);
   if (!post) {
     res.status(400).json("Post not found");
   }
@@ -14,19 +13,17 @@ const getEventPost = asyncHandler(async (req, res) => {
 });
 
 const setEventPost = asyncHandler(async (req, res) => {
-  if (!req.body.content || !req.body.title) {
+  if (!req.body.content) {
     res.status(400);
     throw new Error("Please add a text field");
   }
-
   const post = await Post.create({
     userId: req.user.id,
     event: req.params.id,
     content: req.body.content,
-    title: req.body.title,
   });
 
-  Event.updateOne(
+  Event.findOneAndUpdate(
     { _id: req.params.id },
     { $push: { posts: post } },
     (error, success) => {
@@ -35,7 +32,8 @@ const setEventPost = asyncHandler(async (req, res) => {
       } else {
         console.log(success);
       }
-    }
+    },
+    {new: true}
   );
 
   res.status(200).json(post);

@@ -20,7 +20,6 @@ const initialLayout = {
 };
 
 const CustomTabs = ({
-  percentage,
   formData,
   setFormData,
   setPercentOne,
@@ -31,6 +30,7 @@ const CustomTabs = ({
   percentTwo,
   percentThree,
   percentFour,
+  navigation,
 }) => {
   const [index, setIndex] = React.useState(0);
   const [fontsLoaded] = useFonts({
@@ -41,6 +41,7 @@ const CustomTabs = ({
     {
       key: "first",
       title: "Namn & beskrivning",
+      accessible: true,
     },
     {
       key: "second",
@@ -76,6 +77,7 @@ const CustomTabs = ({
             setPercentTwo={setPercentTwo}
             jumpTo={jumpTo}
             percentTwo={percentTwo}
+            percentOne={percentOne}
 
           />
         );
@@ -87,6 +89,7 @@ const CustomTabs = ({
             setPercentThree={setPercentThree}
             jumpTo={jumpTo}
             percentThree={percentThree}
+            percentTwo={percentTwo}
 
           />
         );
@@ -98,6 +101,8 @@ const CustomTabs = ({
             setPercentFour={setPercentFour}
             jumpTo={jumpTo}
             percentFour={percentFour}
+            percentThree={percentThree}
+            navigation={navigation}
           />
         );
     }
@@ -105,7 +110,6 @@ const CustomTabs = ({
 
   const renderTabBar = (props) => {
     const inputRange = props.navigationState.routes.map((x, i) => i);
-
     return (
       <Box alignItems="center">
         <Box flexDirection="row" maxW="100%" alignItems="center">
@@ -116,6 +120,15 @@ const CustomTabs = ({
                 inputIndex === i ? 1 : 0.5
               ),
             });
+
+            const percentage = {
+              percentOne,
+              percentTwo,
+              percentThree,
+              percentFour
+            }
+            const validated = Object.values(percentage).filter((obj) => obj === 100)
+            
             const color =
               index === i
                 ? useColorModeValue("#000", "#e5e5e5")
@@ -124,7 +137,7 @@ const CustomTabs = ({
               <Box key={i} flex={1} alignItems="center" justifyContent={"flex-end"}>
                 <Pressable
                   onPress={() => {
-                    setIndex(i);
+                    setIndex(i)
                   }}
                 >
                 {route.key === "first" ?
@@ -180,6 +193,7 @@ const CustomTabs = ({
       renderTabBar={renderTabBar}
       onIndexChange={setIndex}
       initialLayout={initialLayout}
+      lazy
       style={{
         marginTop: StatusBar.currentHeight,
       }}

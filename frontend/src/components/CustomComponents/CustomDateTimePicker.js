@@ -10,7 +10,6 @@ const CustomDateTimePicker = ({mode, icon, validateFormData, setFormData, formDa
   const onChange = (event, selectedDate) => {
     setShow(false)
     const currentDate = selectedDate;
-    console.log(currentDate)
     setDate(currentDate);
     setFormData({ ...formData, date: currentDate });
   };

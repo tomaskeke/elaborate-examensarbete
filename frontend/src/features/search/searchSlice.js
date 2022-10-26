@@ -10,7 +10,6 @@ const initialState = {
 }
 
 
-
 export const searchForFriends = createAsyncThunk(
     "search/friends",
     async (query, thunkAPI) => {

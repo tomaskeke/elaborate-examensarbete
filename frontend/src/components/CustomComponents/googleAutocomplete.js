@@ -3,7 +3,7 @@ import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplet
 import { GOOGLE_MAPS_API } from "@env";
 import { useTheme } from "native-base";
 
-const GooglePlacesInput = ({ setFormData, setIsFocused, formData, hideAll, setHideAll }) => {
+const GooglePlacesInput = ({ setFormData, setIsFocused, formData, validateFormData, setHideAll }) => {
   const { colors } = useTheme();
   const [infoResponse, setInfoResponse] = useState();
   const ref = useRef();
@@ -16,6 +16,7 @@ const GooglePlacesInput = ({ setFormData, setIsFocused, formData, hideAll, setHi
     if (ref.current.setAddressText) {
       setIsFocused(false)
       setHideAll(false);
+
     }
 
     if (infoResponse) {
@@ -50,7 +51,6 @@ const GooglePlacesInput = ({ setFormData, setIsFocused, formData, hideAll, setHi
       });
     }
   }, [infoResponse, setInfoResponse, setFormData]);
-  console.log(hideAll)
   return (
     <GooglePlacesAutocomplete
       textInputProps={{

@@ -1,13 +1,12 @@
-import { Box, ScrollView, Text, Center, View } from "native-base";
+import { Box, ScrollView, Text, Center, View, Divider } from "native-base";
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import Constants from "expo-constants";
-import { getEvents, resetEvents} from "../features/events/eventSlice";
+import { getEvents, resetEvents } from "../features/events/eventSlice";
 import CustomSelect from "../components/CustomComponents/CustomSelect";
 import FeedCard from "../components/Cards/FeedCard";
-import { resetPosts } from "../features/posts/postsSlice";
+import { getEventPosts, resetPosts } from "../features/posts/postsSlice";
 import { fullReset } from "../features/auth/authSlice";
-
+import CreatePost from "../components/CustomComponents/CreatePost";
 
 export default function FeedScreen({ navigation }) {
   const [service, setService] = React.useState(null);
@@ -17,19 +16,20 @@ export default function FeedScreen({ navigation }) {
   const { user, isSuccess } = useSelector((state) => state.auth);
 
   React.useEffect(() => {
+    dispatch(getEvents());
+    if (service) {
+      dispatch(getEventPosts(service));
+    }
     if (!user) {
-      dispatch(fullReset())
-      navigation.navigate("LoginScreen")
+      dispatch(fullReset());
+      navigation.navigate("LoginScreen");
     }
-    if (isSuccess) {
-      dispatch(getEvents());
-    }
-
     return () => {
       dispatch(resetEvents());
       dispatch(resetPosts());
     };
-  }, [dispatch, isSuccess]);
+  }, [dispatch, service, isSuccess]);
+
   return (
     <Box height="100%" backgroundColor={"coolGray.800"}>
       {user ? (
@@ -46,26 +46,39 @@ export default function FeedScreen({ navigation }) {
               events={events}
             />
           </Box>
-          <View height="100%">
-         
+          <CreatePost service={service} />
+          <View height="100%" alignItems="center">
             {service !== null && posts.length > 0 ? (
-              <ScrollView>
-              {posts.map((post) => <FeedCard post={post} />)}
+              <ScrollView
+                showsVerticalScrollIndicator={false}
+                width="95%"
+                flex={1}
+                contentContainerStyle={{ paddingBottom: 90 }}
+              >
+                {posts &&
+                  posts.map((post, index) => (
+                    <>
+                      <FeedCard
+                        key={post._id}
+                        post={post}
+                        reverse={index % 2 === 0 ? false : true}
+                      />
+                      <Divider mt="2" backgroundColor="coolGray.700" />
+                    </>
+                  ))}
               </ScrollView>
             ) : isError ? (
               <Text>{message}</Text>
             ) : (
               <Box height="100%" alignItems="center" justifyContent="center">
-              <Text alignSelf="center" >No event selected.</Text>
+                <Text alignSelf="center">No event selected.</Text>
               </Box>
             )}
           </View>
         </>
       ) : (
         <Center>
-        <Text>
-          Du behöver logga in för att se den här vyn
-        </Text>
+          <Text>Du behöver logga in för att se den här vyn</Text>
         </Center>
       )}
     </Box>

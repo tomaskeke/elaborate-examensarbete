@@ -5,6 +5,8 @@ const {
   getEvents,
   getEvent,
   getEventMembers,
+  getEventTodos,
+  deleteEventTodo,
   getEventPosts,
   setEvent,
   updateEvent,
@@ -25,8 +27,10 @@ router
   .get(getEvent)
   .put(protect, updateEvent)
   .delete(protect, deleteEvent);
-router.route("/:id/members").get(getEventMembers);
-router.route("/:id/eventposts").get(getEventPosts);
+  router.route("/:id/members").get(getEventMembers);
+  router.route("/:id/todos").get(protect, getEventTodos);
+  router.route("/:id/removetodo").post(protect, deleteEventTodo);
+  router.route("/:id/eventposts").get(getEventPosts);
 router.route("/:id/addadmin").put(protect, updateEventAdmin);
 router.route("/:id/addmember").put(protect, updateEventMember);
 router.route("/:id/removemember").put(protect, deleteEventMember);

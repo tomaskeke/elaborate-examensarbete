@@ -20,6 +20,7 @@ const userSchema = mongoose.Schema(
     },
     password: {
       type: String,
+      select: false,
       required: [true, "Please add a password"],
     },
     avatar: {
@@ -33,14 +34,22 @@ const userSchema = mongoose.Schema(
     },
     subscriptions: {
       type: Array,
+      select: false,
       default: [],
+    },
+    eventPending: {
+      type: [mongoose.Schema.Types.ObjectId],
+      select: false,
+      Ref: "User"
     },
     pending: {
       type: [mongoose.Schema.Types.ObjectId],
+      select: false,
       ref: "User"
     },
     initPending: {
       type: [mongoose.Schema.Types.ObjectId],
+      select: false,
       ref: "User"
     },
     age: {
@@ -56,6 +65,10 @@ const userSchema = mongoose.Schema(
       type: [mongoose.Schema.Types.ObjectId],
       ref: "User",
   },
+    todoList: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "Todo",
+    }
   },
   {
     timestamps: true,

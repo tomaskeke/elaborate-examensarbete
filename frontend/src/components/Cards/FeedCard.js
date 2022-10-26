@@ -1,14 +1,15 @@
 import axios from "axios";
-import { View, Text, Box, Container } from "native-base";
+import { View, Text, Box, Icon, Avatar, Divider } from "native-base";
+import { Ionicons } from "@expo/vector-icons"
 import React from "react";
 import { useSelector } from "react-redux";
+import {API_URL} from "@env"
 
-const API_URL = "http://192.168.0.12:5000";
-
-const FeedCard = ({ post }) => {
-  const [userName, setUserName] = React.useState("");
+const FeedCard = ({ post, reverse }) => {
+  const [postCreator, setPostCreator] = React.useState("");
   const { events } = useSelector((state) => state.events);
   const { user } = useSelector((state) => state.auth)
+  
   // finds event in which post is made
   const findTitle = (value) => {
     return value._id === post.event;
@@ -17,52 +18,47 @@ const FeedCard = ({ post }) => {
   let userId = post.userId;
   const getUser = async (userId) => {
     const response = await axios.get(`${API_URL}/api/users/${userId}`);
-    setUserName(response.data);
+    console.log(response.data)
+    setPostCreator(response.data);
   };
 
   React.useEffect(() => {
     getUser(userId);
-  }, [userName]);
+  }, []);
 
   return (
-    <View w="100%">
+    <View key={post._id} w="100%" mt={2}>
     { user &&
     <>
-      <Box
-        style={{
-          height: 50,
-          width: "100%",
-          marginTop: 4,
-          alignItems: "center",
-        }}
-        flexDirection="row"
-        padding={2}
-      >
-        <Text italic color="#787878" fontSize="xs">
-          {userName.name}
+      <Box padding={2} flexDir={reverse ? "row" : "row-reverse"} width="100%" backgroundColor="coolGray.800">
+        <Box flex={1} alignItems="center" justifyContent="center">
+        <Avatar size="md" source={{
+          uri: postCreator.avatar
+        }} />
+        <Text fontSize="sm">
+          {postCreator.fName} {postCreator.lName}
         </Text>
-        <Text fontSize="xs" color="#787878">
-          {" "}
-          gjorde ett inlägg i{" "}
-        </Text>
-        <Text fontSize="xs" bold italic color="#787878">
-          {eventTitle && eventTitle.title}
-        </Text>
-      </Box>
-      <Box padding={3} style={{ backgroundColor: "#FFF", width: "100%" }}>
-        <Box minHeight={70}>
-          <Text fontSize="lg">{post.title}</Text>
-          <Text fontSize="sm">{post.content}</Text>
         </Box>
-        <Box flexDirection="row">
-          <Text fontSize="xs" italic marginRight="5">
-            Likes({post.comments.length})
-          </Text>
-          <Text fontSize="xs" italic>
-            Comments({post.comments.length})
-          </Text>
+        <Box flex={2} backgroundColor="coolGray.700" borderRadius="3" >
+        <Box minHeight={30} p="3" borderColor="coolGray.600" >
+          <Text fontSize="sm">{post?.content}</Text>
         </Box>
-      </Box>
+        <Box flexDirection="row" p="2" alignItems="center" justifyContent="flex-start">
+          <Box flex={1} flexDir="row">
+          <Icon as={Ionicons} name="heart" />
+          <Text fontSize="xs"  marginRight="5">
+            ({post?.comments?.length})
+          </Text>
+          </Box>
+          <Box flex={1} flexDir="row" alignItems="center">
+          <Text fontSize="xs">
+          <Icon as={Ionicons} name="chatbox" />
+            ({post?.comments?.length})
+          </Text>
+          </Box>
+          </Box>
+          </Box>
+        </Box>
       </>
     }
     </View>

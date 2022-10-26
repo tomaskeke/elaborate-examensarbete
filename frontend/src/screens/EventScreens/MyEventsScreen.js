@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 import { useFocusEffect } from "@react-navigation/native";
-import { Box, FlatList, Text, View, Center } from "native-base";
+import { FlatList, Text, View, Center } from "native-base";
 import { useDispatch, useSelector } from "react-redux";
-import { getEvents, resetEventStates } from "../../features/events/eventSlice";
+import { getEvents } from "../../features/events/eventSlice";
 import { reset } from "../../features/auth/authSlice";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import EventCard from "../../components/Cards/EventCard";
-import Constants from "expo-constants"
 import CustomHeaderBar from "../../components/headerbars/CustomHeaderBar";
 
 
@@ -16,6 +15,10 @@ const MyEventsScreen = ({ navigation, route }) => {
   const { events, isLoading, isSuccess, isUpdated, isError, message } = useSelector(
     (state) => state.events
   );
+    const eventsToSort = [ ...events]
+   const newestFirstEvents = eventsToSort.sort((a, b) => Date.parse(b.date) - Date.parse(a.date))
+ 
+
   const [showModal, setShowModal] = useState(false);
   useFocusEffect(React.useCallback(() => {
     if (isError) {
@@ -36,28 +39,22 @@ const MyEventsScreen = ({ navigation, route }) => {
   }
 
   return (
-    <Box height="100%" backgroundColor={"coolGray.800"}>
+    <View height="100%" width="100%" backgroundColor={"coolGray.800"}>
     <CustomHeaderBar navigation={navigation} goBack="top" />
-    <View
-      style={{
-        flex: 1,
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
+    <View flex={1} maxW="95%">
       {events && events.length > 0 ? (
         <FlatList
           style={{
             flex: 1,
           }}
           nestedScrollEnabled
-          data={events}
+          data={newestFirstEvents}
           keyExtractor={(item, index) => item.key}
-          renderItem={(item) => (
+          renderItem={(item, index) => (
             <EventCard
+              key={index}
               showModal={showModal}
               setShowModal={setShowModal}
-              key={item.key}
               item={item}
               navigation={navigation}
               route={route}
@@ -70,7 +67,7 @@ const MyEventsScreen = ({ navigation, route }) => {
         </Center>
       )}
     </View>
-    </Box>
+    </View>
   );
 };
 export default MyEventsScreen;

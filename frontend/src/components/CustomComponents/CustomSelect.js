@@ -1,5 +1,6 @@
+import { useFocusEffect } from "@react-navigation/native";
 import { Select, Box, CheckIcon, Center } from "native-base";
-import React, { useEffect } from "react";
+import React from "react";
 import { useDispatch } from "react-redux";
 import { getEventPosts } from "../../features/posts/postsSlice";
 
@@ -12,26 +13,36 @@ const CustomSelect = ({ events, service, setService }) => {
     }
   }, [service, dispatch]);
 
+  useFocusEffect(React.useCallback(() => {
+
+  }, []))
+
+
   return (
     <Center>
-      <Box maxW={300}>
+      <Box width="100%">
         <Select
-          borderColor="coolGray.700"
-          color="coolGray.700"
+          borderWidth={1}
+          borderTopWidth={0}
+          borderLeftWidth={0}
+          borderRightWidth={0}
+          borderColor="coolGray.500"
+          color="coolGray.300"
           selectedValue={service}
-          minWidth={200}
+          minWidth="100%"
           accessibilityLabel="Choose event"
           placeholder="Choose event"
-          placeholderTextColor="coolGray.500"
+          placeholderTextColor="coolGray.300"
+          backgroundColor="coolGray.800"
           _selectedItem={{
-            bg: "coolGray.400",
+            bg: "coolGray.700",
             endIcon: <CheckIcon size="3"/>,
           }}
           onValueChange={(itemValue) => setService(itemValue)}
         >
-          {events.length > 0 &&
-            events.map((event) => (
-              <Select.Item label={event.title} value={event._id} />
+          {events?.length > 0 &&
+            events?.map((event) => (
+              <Select.Item key={event._id} label={event.title} value={event._id} />
             ))}
         </Select>
       </Box>

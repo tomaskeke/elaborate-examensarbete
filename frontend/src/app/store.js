@@ -7,6 +7,7 @@ import eventReducer from "../features/events/eventSlice";
 import postReducer from "../features/posts/postsSlice";
 import friendReducer from "../features/friends/friendsSlice"
 import searchReducer from "../features/search/searchSlice"
+import todoReducer from "../features/todos/todoSlice";
 const persistConfig = {
   key: "root",
   storage: AsyncStorage,
@@ -19,6 +20,7 @@ const reducer = combineReducers({
   posts: postReducer,
   friends: friendReducer,
   search: searchReducer,
+  todos: todoReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, reducer);

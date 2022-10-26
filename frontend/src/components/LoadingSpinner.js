@@ -1,11 +1,11 @@
-import { HStack, Spinner } from "native-base";
+import { HStack, Spinner, View } from "native-base";
 import React from "react";
 
 const LoadingSpinner = () => {
   return (
-    <HStack space={8} justifyContent="center">
+    <View width="100%" height="100%" justifyContent="center" backgroundColor="coolGray.800">
       <Spinner size="lg" />
-    </HStack>
+    </View>
   );
 };
 

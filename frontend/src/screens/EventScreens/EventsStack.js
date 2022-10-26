@@ -1,12 +1,13 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import EventDetails from "./EventDetails";
+import EventDetails from "./CreateEventTabView/eventDetails/EventDetails";
 import MyEventsScreen from "./MyEventsScreen";
 import CreateEventScreen from "./CreateEventScreen"
 import ProfileDetails from "./ProfileDetails";
-import { getHeaderTitle } from "@react-navigation/elements";
-import CustomHeaderBar from "../../components/headerbars/CustomHeaderBar";
+import CreateTodoList from "./CreateTodoList";
+import MyTodoLists from "./MyTodoLists";
 import FindFriendScreen from "../AuthScreens/FindFriendScreen";
+import EventDetailsStack from "./CreateEventTabView/eventDetails/EventDetailsStack";
 
 const EventsStack = () => {
   const Stack = createNativeStackNavigator();
@@ -14,7 +15,9 @@ const EventsStack = () => {
     <Stack.Navigator initialRouteName="MyEventsScreen" screenOptions={{ headerShown: false}}>
     <Stack.Screen name="MyEventsScreen" component={MyEventsScreen} />
     <Stack.Screen name="CreateEventScreen" component={CreateEventScreen} />
-      <Stack.Screen name="EventDetails" component={EventDetails} />
+    <Stack.Screen name="CreateTodoList" component={CreateTodoList} />
+    <Stack.Screen name="MyTodoLists" component={MyTodoLists} />
+      <Stack.Screen name="EventDetailsStack" component={EventDetailsStack} />
       <Stack.Screen name="ProfileDetails" component={ProfileDetails} />
       <Stack.Screen name="FindFriendScreen" component={FindFriendScreen} />
     </Stack.Navigator>

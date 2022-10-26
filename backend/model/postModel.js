@@ -7,11 +7,6 @@ const postSchema = mongoose.Schema(
       required: true,
       ref: "User",
     },
-    title: {
-      type: String,
-      trim: true,
-      required: true,
-    },
     content: {
       type: String,
       trim: true,
@@ -25,12 +20,10 @@ const postSchema = mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Event",
     },
-    comments: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
+    comments: { 
+        type: [mongoose.Schema.Types.ObjectId],
         ref: "Comment",
       },
-    ],
   },
   {
     timeStamps: true,

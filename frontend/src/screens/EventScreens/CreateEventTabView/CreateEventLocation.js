@@ -4,7 +4,7 @@ import {
   Button,
   Text,
   Input,
-  Icon,
+  Center,
   Modal,
   KeyboardAvoidingView,
 } from "native-base";
@@ -19,6 +19,7 @@ import { useFocusEffect } from "@react-navigation/native";
 const createEventLocation = ({
   formData,
   setFormData,
+  percentOne,
   percentTwo,
   setPercentTwo,
   jumpTo,
@@ -35,7 +36,6 @@ const createEventLocation = ({
   const [isFocused, setIsFocused] = useState(false);
   const [hideAll, setHideAll] = useState(false);
 
-  LogBox.ignoreLogs(["VirtualizedLists should never be nested"]);
 
   // validation
   const validate = (name, value) => {
@@ -66,7 +66,8 @@ const createEventLocation = ({
     day: "numeric",
   };
   const dateFormat = formData?.date?.toLocaleDateString("sv-SE", options);
-
+  const dateTime = formData?.date?.toLocaleString("SV").split(" ")[1];
+  
   // inputFields to render
   const inputFields = [
     {
@@ -119,15 +120,20 @@ const createEventLocation = ({
 
   useFocusEffect(
     React.useCallback(() => {
+       
+  LogBox.ignoreLogs(["VirtualizedLists should never be nested"]);
       if (place || timeAndDate) {
         validateFormData();
       }
-    }, [place, timeAndDate])
+      if(hideAll){
+        validateFormData();
+      }
+    }, [place, timeAndDate, hideAll])
   );
 
   return (
-    // 302.5454406738281 scrollView
     <View height="100%">
+    {percentOne === 100 ?
       <Box alignItems="center">
         {!hideAll && (
           <>
@@ -197,6 +203,7 @@ const createEventLocation = ({
                       setFormData={setFormData}
                       formData={formData}
                       setIsFocused={setIsFocused}
+                      validateFormData={validateFormData}
                       isFocused={isFocused}
                       percentTwo={percentTwo}
                       setPercentTwo={setPercentTwo}
@@ -292,28 +299,31 @@ const createEventLocation = ({
         </Button>
         <Box width="95%" mt={4} justifyContent="flex-start" flexDir="row">
           <Text fontSize="sm">
-            {dateFormat && dateFormat}
-            {}
+            {dateFormat && dateFormat} {dateTime && dateTime.slice(0, 5)}
           </Text>
         </Box>
-        <Box width="95%" justifyContent="flex-start" flexDir="row">
+        <Box width="95%" justifyContent="flex-start" flexDir="column">
           {percentTwo === 100 && (
             <>
-              <Text fontSize="sm">
-                {formData?.street_name}
-                {formData?.street_number}
-              </Text>
-              <Text fontSize="sm">{formData?.street_number}, </Text>
+            <Box flexDir="row">
+              <Text fontSize="sm">{formData?.street_name} {formData?.street_number} , </Text>
               <Text fontSize="sm">{formData?.postal_code}, </Text>
-              <Text fontSize="sm">{formData?.city}, </Text>
-              <Text textAlign="left" fontSize="sm">
-                {formData?.state},{" "}
-              </Text>
+              <Text fontSize="sm">{formData?.city} </Text>
+            </Box>
+            <Box flexDir="row">
+              <Text textAlign="left" fontSize="sm">{formData?.state}, </Text>
               <Text fontSize="sm">{formData.country} </Text>
+            </Box>
+            
             </>
           )}
         </Box>
       </Box>
+    : 
+    <Center>
+    <Text>Ange namn och beskrivning innan du går vidare</Text>
+    </Center>
+    }
     </View>
   );
 };

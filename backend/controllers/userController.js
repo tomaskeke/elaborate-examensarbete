@@ -1,12 +1,21 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler");
-
 const User = require("../model/userModel");
 
 // @desc    Register new user
 // @route POST /api/users
 // @access Public
+
+// generate JWT
+
+const generateToken = (id) => {
+  return jwt.sign({ id }, process.env.JWT_SECRET, {
+    expiresIn: "30d",
+  });
+};
+
+
 const registerUser = asyncHandler(async (req, res) => {
   const { fName, lName, email, password } = req.body;
 
@@ -55,8 +64,12 @@ const registerUser = asyncHandler(async (req, res) => {
 const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
+  if(password === undefined) {
+    res.status(400);
+    throw new Error("Please enter a password");
+  }
   //check for user email
-  let user = await User.findOne({ email: req.body.email });
+  let user = await User.findOne({ email: req.body.email }).select("+password");
   if (!user) {
     res.status(400);
     throw new Error("Invalid email address");
@@ -98,7 +111,7 @@ const getMe = asyncHandler(async (req, res) => {
 //@route GET /api/users/
 
 const getUsers = asyncHandler(async (req, res) => {
-  const users = await User.find();
+  const users = await User.find().select({initPending: 1, eventPending: 1, pending: 1, fName: 1, lName: 1});
   res.status(200).json(users);
 });
 
@@ -135,6 +148,9 @@ const getUser = asyncHandler(async (req, res) => {
     desc,
     subscriptions,
     profilebackground,
+    initPending,
+    pending,
+    eventPending,
     age,
     friendsList,
     createdAt,
@@ -146,6 +162,9 @@ const getUser = asyncHandler(async (req, res) => {
     email,
     avatar,
     profilebackground,
+    initPending,
+    pending,
+    eventPending,
     desc,
     subscriptions,
     age,
@@ -158,22 +177,22 @@ const sendFriendRequest = asyncHandler(async (req, res) => {
   const id = req.user.id;
   const recipientId = req.params.id;
 
-  const recipient = await User.findById({_id: recipientId})
-  const user = await User.findById({_id: id});
+  const recipient = await User.findById({_id: recipientId}).select({pending: 1, initPending: 1})
+  const user = await User.findById({_id: id}).select({pending: 1, initPending: 1});
 
   if(recipientId === id){
     res.status(400)
     throw new Error("You can't send a friend request to yourself");
   }
-  if(recipient.pending?.includes(id)){
+  if(Object.values(recipient?.pending).includes(id)){
     res.status(400);
     throw new Error("already pending request");
   }
-  if(recipient.initPending?.includes(id)){
+  if(Object.values(recipient?.initPending).includes(id)){
     res.status(400);
     throw new Error("already pending request");
   }
-  if(recipient.friendsList.includes(id)){
+  if(recipient?.friendsList?.includes(id)){
     res.status(400)
     throw new Error("already friends");
   }
@@ -193,7 +212,7 @@ const sendFriendRequest = asyncHandler(async (req, res) => {
 });
 
 const getInitializedRequests = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.user.id);
+  const user = await User.findById(req.user.id).select({pending: 1, initPending: 1});
 
   const requests = await User.find({ _id: { $in: user.initPending } });
 
@@ -205,7 +224,7 @@ const getInitializedRequests = asyncHandler(async (req, res) => {
 });
 
 const getFriendRequests = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.user.id);
+  const user = await User.findById(req.user.id).select({pending: 1, initPending: 1});
 
   const requests = await User.find({ _id: { $in: user.pending } });
 
@@ -319,13 +338,6 @@ const removeFriend = asyncHandler(async (req, res) => {
   res.status(200).json({id: friendId});
 });
 
-// generate JWT
-
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: "30d",
-  });
-};
 
 module.exports = {
   registerUser,

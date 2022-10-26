@@ -3,6 +3,7 @@ const asyncHandler = require("express-async-handler");
 const Event = require("../model/eventModel");
 const User = require("../model/userModel");
 const Post = require("../model/postModel");
+const Todo = require("../model/todoModel");
 
 // @desc    Get event
 // @route GET /api/events
@@ -35,14 +36,46 @@ const getEvent = asyncHandler(async (req, res) => {
 const getEventMembers = asyncHandler(async (req, res) => {
   const event = await Event.findById(req.params.id);
 
-  if (!event.user) {
+  if (!event.members) {
     res.status(400);
     throw new Error("No event members found");
   }
-  const users = await User.find({ _id: { $in: event.user } });
+  const users = await User.find({ _id:  { $in: event.members } });
 
   res.status(200).json(users);
 });
+
+const getEventTodos = asyncHandler(async (req, res) => {
+  const event = await Event.findById(req.params.id);
+
+  if (!event.todos) {
+    res.status(400);
+    throw new Error("No event todos found");
+  }
+
+  const todoObjects = await Todo.find({ _id: {$in: event.todos}})
+
+  res.status(200).json(todoObjects);
+});
+
+const deleteEventTodo = asyncHandler(async (req, res) => {
+  const event = await Event.findById(req.params.id);
+  if (!event) {
+    res.status(400);
+    throw new Error("Event not found");
+  }
+  // make sure logged in user matches event user
+  const updatedEventTodo = await Event.findOneAndUpdate(
+    { _id: event.id },
+    {
+      $pull: { todos: req.body.id },
+    },
+    { new: true }
+  );
+
+  res.status(200).json(updatedEventTodo);
+});
+
 
 // @desc    Set events
 // @route POST /api/events/:id/eventposts
@@ -63,7 +96,7 @@ const getEventPosts = asyncHandler(async (req, res) => {
 // @route POST /api/events
 // @access private
 const setEvent = asyncHandler(async (req, res) => {
-  const { title, desc } = req.body;
+  const { title, desc, street_name, city } = req.body;
   if (!title) {
     res.status(400);
     throw new Error("Event must have a title");
@@ -72,24 +105,61 @@ const setEvent = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("Event must have a description");
   }
-  const eventExists = await Event.findOne({ title });
-
-  if (eventExists) {
+  if (!street_name) {
     res.status(400);
-    throw new Error("Event already exists");
+    throw new Error("Event must have a street name");
+  }
+  if (!city) {
+    res.status(400);
+    throw new Error("Event must have a city");
   }
 
+  
   const event = await Event.create({
     creator: req.user.id,
-    desc: req.body.desc,
     title: req.body.title,
-    user: req.user.id,
+    desc: req.body.desc,
+    street_name: req.body.street_name,
+    street_number: req.body.street_number,
+    postal_code: req.body.postal_code,
+    city: req.body.city,
+    state: req.body.state,
+    country: req.body.country,
+    date: req.body.date,
+    initPending: req.body.invites,
+    members: req.user.id,
     admin: req.user.id,
     posts: [],
   });
-  res.status(200).json(event);
-});
 
+  const invites = await User.find({ _id: { $in: event.initPending } });
+    
+  const checkInvites = async (invite) => {
+    if(invite._id === req.user.id){
+      res.status(400)
+      throw new Error("");
+    }
+    if(invite.pending?.includes(event._id)){
+      res.status(400);
+      throw new Error("already pending request");
+    }
+  
+    if(invite.subscriptions?.includes(event._id)){
+      res.status(400)
+      throw new Error("already member");
+    }
+    const updateRecipient = await User.findOneAndUpdate(
+      {_id: invite}, 
+      { $push: { eventPending: [event._id]  } },
+      { new: true }
+    ).select("eventPending")
+    res.status(200).json(event);
+  };
+  
+  invites.forEach(invite =>
+    checkInvites(invite)
+    );
+  });
 // @desc    Update events
 // @route PUT /api/events/:id
 // @access private
@@ -174,12 +244,14 @@ const updateEventMember = asyncHandler(async (req, res) => {
   // make sure logged in user matches event user
   if (event.creator.toString() !== user.id.toString()) {
     if (!event.admin.includes(user.id.toString())) {
-      res.status(401);
-      throw new Error("User not authorized");
+      if(!event.user.includes(user.id.toString())){
+        res.status(401);
+        throw new Error("User not authorized");  
+      }
     }
   }
-  if (event.user.includes(user.id.toString())) {
-    throw new Error("User is aldready a member");
+  if (event.user.includes(req.body.id.toString())) {
+    throw new Error("User is already a member");
   }
   const updatedEventUser = await Event.findOneAndUpdate(
     { _id: req.params.id },
@@ -292,6 +364,8 @@ module.exports = {
   getEvents,
   getEvent,
   getEventMembers,
+  getEventTodos,
+  deleteEventTodo,
   getEventPosts,
   setEvent,
   updateEvent,

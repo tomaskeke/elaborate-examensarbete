@@ -12,7 +12,6 @@ const AdminMenu = ({ item, setShowModal, showModal }) => {
     dispatch(removeEvent(item._id));
       Toast.show({
         render: ({ id }) => {
-          console.log(id);
           return (
             <CustomToast
               bg="emerald.600"

@@ -1,15 +1,24 @@
 import { Box, Avatar, HStack, VStack, Text, Spacer, Center } from "native-base";
 import React from "react";
 import ModalComponent from "../CustomComponents/ModalComponent";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import AdminMenu from "../CustomComponents/AdminMenu";
 
 const EventCard = ({ navigation, item, setShowModal, showModal }) => {
   const { user } = useSelector((state) => state.auth);
+  const options = {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  };
+  const eventDate = new Date(item.item.date)
+  const dateFormat = eventDate.toLocaleDateString("sv-SE", options)
+  const dateTime = eventDate.toLocaleString("sv-SE").split(" ")[1].slice(0, 5)
   return (
-    <Box mx={2} key={item._id}>
+    <Box mx={2} key={item.item._id} width="100%">
       <Box
-        key={item.key}
+      key={item.item._id}
         borderBottomWidth="1"
         _dark={{
           borderColor: "muted.50",
@@ -19,14 +28,14 @@ const EventCard = ({ navigation, item, setShowModal, showModal }) => {
         pr={["0", "5"]}
         py="2"
       >
-        <HStack space={[2, 3]} justifyContent="space-between">
+        <HStack space={2} maxWidth="350">
           <Avatar
             size="48px"
             source={{
-              uri: item.item.profilepicture,
+              uri: item.item.Avatar,
             }}
           />
-          <VStack>
+          <VStack >
             <Text
               _dark={{
                 color: "warmGray.50",
@@ -34,26 +43,14 @@ const EventCard = ({ navigation, item, setShowModal, showModal }) => {
               color="coolGray.800"
               bold
               onPress={() =>
-                navigation.navigate("EventDetails", { 
-                 screen: "EventsScreen", 
-                 params: { itemId: item.item._id}
-                 
-                })
+                navigation.navigate("EventDetailsStack", { 
+                 screen: "EventDetails", params: { eventId: item.item._id,
+                params: { eventId: item.item._id}            
+              }})
               }
             >
               {item.item.title}
             </Text>
-            <Text
-              color="coolGray.600"
-              _dark={{
-                color: "warmGray.200",
-              }}
-            >
-              {item.item.desc}
-            </Text>
-          </VStack>
-          <Spacer />
-          <VStack>
             <Text
               fontSize="xs"
               _dark={{
@@ -62,18 +59,22 @@ const EventCard = ({ navigation, item, setShowModal, showModal }) => {
               color="coolGray.800"
               alignSelf="flex-start"
             >
-              {new Date(item.item.createdAt).toLocaleString("en-US")}
+              {dateFormat} {dateTime}
             </Text>
-            {user && item.item.admin.includes(user._id) ? (
+          </VStack>
+          <Spacer />
+          <Box alignItems="flex-start">
+            {user && item?.item?.admin?.includes(user._id) ? (
               <AdminMenu
+                key={item?.item?._id}
                 setShowModal={setShowModal}
                 showModal={showModal}
-                item={item.item}
+                item={item?.item}
               />
             ) : (
               <></>
             )}
-          </VStack>
+          </Box>
         </HStack>
         <Center>
           <ModalComponent

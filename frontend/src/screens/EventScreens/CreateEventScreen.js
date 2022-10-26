@@ -22,6 +22,7 @@ const CreateEventScreen = ({ navigation }) => {
     postal_code: "",
     country: "",
     date: null,
+    invites: [],
   });
   const [percentOne, setPercentOne] = React.useState(0);
   const [percentTwo, setPercentTwo] = React.useState(0);
@@ -92,6 +93,7 @@ const CreateEventScreen = ({ navigation }) => {
         percentTwo={percentTwo}
         percentThree={percentThree}
         percentFour={percentFour}
+        navigation={navigation}
           
         />
     </Box>

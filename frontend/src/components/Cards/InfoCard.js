@@ -15,14 +15,13 @@ const InfoCard = ({icon, info}) => {
     >
       <Icon
         as={Ionicons}
-        name="ios-location"
+        name={icon}
         color="coolGray.300"
         alignSelf="center"
         size="2xl"
       />
       <Text textAlign="left" fontSize="sm" padding="2">
-        Här anger du information om var evenemanget kommer hållas. Detta
-        inkluderar tid, datum och plats.
+        {info}
       </Text>
     </View>
   );

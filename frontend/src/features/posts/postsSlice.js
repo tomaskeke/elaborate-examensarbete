@@ -28,6 +28,24 @@ export const getEventPosts = createAsyncThunk(
   }
 );
 
+export const setEventPost = createAsyncThunk(
+  "posts/createPost",
+  async (eventData, thunkAPI) => {
+    const token = thunkAPI.getState().auth.user.token;
+    try {
+      return await postsService.setEventPost(eventData, token);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
 export const postSlice = createSlice({
   name: "post",
   initialState,
@@ -48,7 +66,20 @@ export const postSlice = createSlice({
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;
-      });
+      })
+      .addCase(setEventPost.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(setEventPost.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.posts.push(action.payload)
+      })
+      .addCase(setEventPost.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+      })
   },
 });
 

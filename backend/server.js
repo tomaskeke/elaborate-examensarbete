@@ -21,6 +21,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use("/api/events", require("./routes/eventRoutes"));
 app.use("/api/events", require("./routes/postRoutes"));
 app.use("/api/users", require("./routes/userRoutes"));
+app.use("/api/todos", require("./routes/todoRoutes"));
 app.use(errorHandler);
 
 app.listen(port, () => console.log(`Server started on port ${port}`));

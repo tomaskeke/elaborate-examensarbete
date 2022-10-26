@@ -1,4 +1,4 @@
-import { NativeBaseProvider, Center, Box, Button, Text, HStack, KeyboardAvoidingView } from "native-base";
+import { NativeBaseProvider, Center, Box, Button,View,HStack, KeyboardAvoidingView } from "native-base";
 import LinkButton from "../../components/LinkButton";
 import React, { useEffect, useState } from "react";
 import CustomInput from "../../components/CustomComponents/CustomInput";
@@ -46,7 +46,7 @@ const RegisterScreen = ({ navigation }) => {
     flex={1}
     backgroundColor="coolGray.800"
     h={{
-      base: "400px",
+      base: "600px",
       lg: "auto",
     }}
     behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -110,6 +110,7 @@ const RegisterScreen = ({ navigation }) => {
         </Center>
       </NativeBaseProvider>
     </Box>
+    <View flex={1} />
     </KeyboardAvoidingView>
   );
 };

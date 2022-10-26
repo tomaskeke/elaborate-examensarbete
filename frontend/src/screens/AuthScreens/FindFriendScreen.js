@@ -5,13 +5,13 @@ import {
   SearchIcon,
   Button,
   Avatar,
+  Icon,
   Text,
 } from "native-base";
-import Constants from "expo-constants";
 import React from "react";
 import CustomHeaderBar from "../../components/headerbars/CustomHeaderBar";
 import { useDispatch, useSelector } from "react-redux"
-
+import { Ionicons } from "@expo/vector-icons"
 import { sendFriendRequest, getInitializedRequests} from "../../features/friends/friendsSlice";
 import { searchForFriends, resetSearch } from "../../features/search/searchSlice"
 import { useFocusEffect } from "@react-navigation/native";
@@ -91,9 +91,9 @@ const FindFriendScreen = ({ navigation }) => {
                       <Text fontSize="2xs">{person.email}</Text>
                     </Box>
                   </Box>
-                  <Box flex={1}>
+                  <Box flex={1} alignItems="flex-end">
                   { user._id === person._id || friends.some((obj) => obj._id === person._id) ?
-                    <></>
+                    <Icon as={Ionicons} size="lg" name="checkmark-done" color="success.800" /> 
                     :
                     initPending && initPending?.some((friend) => friend._id === person._id) ?
                     <Button isDisabled={true} size="xs">Pending</Button>
