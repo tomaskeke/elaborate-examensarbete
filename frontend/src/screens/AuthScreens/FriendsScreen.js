@@ -1,6 +1,5 @@
-import { View, Text, Avatar, HStack, VStack, Divider, Box, Button, CheckIcon, CloseIcon, Icon, IconButton } from "native-base";
+import { View, Text, Avatar, Divider, Box, Button, CheckIcon, CloseIcon, IconButton } from "native-base";
 import React from "react";
-import Constants from "expo-constants";
 import CustomHeaderBar from "../../components/headerbars/CustomHeaderBar";
 import { useFocusEffect } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
@@ -8,8 +7,7 @@ import { getFriendsList, acceptFriendRequest, declineFriendRequest, getFriendReq
 
 const FriendsScreen = ({ navigation }) => {
   const { user } = useSelector((state) => state.auth);
-  const { friends, pending, initPending, isError, message } = useSelector((state) => state.friends);
-  const [showInitPending, setShowInitPending] = React.useState(true);
+  const { friends, pending, initPending } = useSelector((state) => state.friends);
 const dispatch = useDispatch();
 
 const handleAcceptFriendRequest = (request) => {

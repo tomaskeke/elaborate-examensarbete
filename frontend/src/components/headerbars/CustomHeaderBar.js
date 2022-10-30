@@ -1,4 +1,5 @@
 import { View, Text, HStack, Box, ChevronLeftIcon } from "native-base";
+import Logo from "../../images/logoxs.svg"
 import React from "react";
 import { Pressable } from "native-base";
 
@@ -11,13 +12,15 @@ const CustomHeaderBar = ({ title, route, back, navigation, goBack }) => {
      index: 0,
      routes: [{ name: 'HomeScreen' }]
 }) }>
-            <ChevronLeftIcon />
+            <ChevronLeftIcon size="md" />
           </Pressable>
         </Box>
+       
         <Box flex={1} justifyContent="center">
           <Text alignSelf="center">{title}</Text>
         </Box>
-        <Box flex={1} justifyContent="center"></Box>
+        <Box flex={1} justifyContent="center">
+        </Box>
       </HStack>
      
     </View>

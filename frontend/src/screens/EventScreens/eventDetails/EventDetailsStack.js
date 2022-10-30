@@ -5,7 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 import EventDetails from "./EventDetails";
 import EventMemberDetails from "./EventMemberDetails";
 import EventSettings from "./EventSettings";
-import CustomHeaderBar from "../../../../components/headerbars/CustomHeaderBar";
+import CustomHeaderBar from "../../../components/headerbars/CustomHeaderBar";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 
 const EventDetailsStack = ({ navigation }) => {

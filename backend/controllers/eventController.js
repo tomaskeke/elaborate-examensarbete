@@ -13,8 +13,8 @@ const getEvents = asyncHandler(async (req, res) => {
   const events = await Event.find({
     $or: [
       { creator: req.user.id },
-      { admin: [req.user.id] },
-      { user: [req.user.id] },
+      { admin: req.user.id },
+      { members: req.user.id },
     ],
   });
 
@@ -40,7 +40,7 @@ const getEventMembers = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("No event members found");
   }
-  const users = await User.find({ _id:  { $in: event.members } });
+  const users = await User.find({ _id: { $in: event.members } });
 
   res.status(200).json(users);
 });
@@ -53,7 +53,7 @@ const getEventTodos = asyncHandler(async (req, res) => {
     throw new Error("No event todos found");
   }
 
-  const todoObjects = await Todo.find({ _id: {$in: event.todos}})
+  const todoObjects = await Todo.find({ _id: { $in: event.todos } });
 
   res.status(200).json(todoObjects);
 });
@@ -76,19 +76,16 @@ const deleteEventTodo = asyncHandler(async (req, res) => {
   res.status(200).json(updatedEventTodo);
 });
 
-
 // @desc    Set events
 // @route POST /api/events/:id/eventposts
 // @access private
 const getEventPosts = asyncHandler(async (req, res) => {
   const event = await Event.findById(req.params.id);
-
+  const posts = await Post.find({ _id: { $in: event.posts } });
   if (!event.posts.length > 0) {
     res.status(400);
     throw new Error("No posts found");
   }
-  const posts = await Post.find({ _id: { $in: event.posts } });
-
   res.status(200).json(posts);
 });
 
@@ -114,7 +111,6 @@ const setEvent = asyncHandler(async (req, res) => {
     throw new Error("Event must have a city");
   }
 
-  
   const event = await Event.create({
     creator: req.user.id,
     title: req.body.title,
@@ -133,33 +129,37 @@ const setEvent = asyncHandler(async (req, res) => {
   });
 
   const invites = await User.find({ _id: { $in: event.initPending } });
-    
+
   const checkInvites = async (invite) => {
-    if(invite._id === req.user.id){
-      res.status(400)
-      throw new Error("");
+    if (invite._id === req.user.id) {
+      res.status(400);
+      throw new Error("You cannot invite yourself");
     }
-    if(invite.pending?.includes(event._id)){
+    if (invite.eventPending?.includes(event._id)) {
       res.status(400);
       throw new Error("already pending request");
     }
-  
-    if(invite.subscriptions?.includes(event._id)){
-      res.status(400)
+
+    if (invite.subscriptions?.includes(event._id)) {
+      res.status(400);
       throw new Error("already member");
     }
     const updateRecipient = await User.findOneAndUpdate(
-      {_id: invite}, 
-      { $push: { eventPending: [event._id]  } },
+      { _id: invite },
+      { $push: { eventPending: [event._id] } },
       { new: true }
-    ).select("eventPending")
+    ).select("eventPending");
+    const updateEvent = await Event.findOneAndUpdate(
+      { _id: event._id },
+      { $push: { initPending: invite } },
+      { new: true }
+    );
     res.status(200).json(event);
   };
-  
-  invites.forEach(invite =>
-    checkInvites(invite)
-    );
-  });
+
+  invites.forEach((invite) => checkInvites(invite));
+});
+
 // @desc    Update events
 // @route PUT /api/events/:id
 // @access private
@@ -229,42 +229,42 @@ const updateEventAdmin = asyncHandler(async (req, res) => {
 //@route POST /api/events/:id/add
 //@access private
 
-const updateEventMember = asyncHandler(async (req, res) => {
+const addEventMember = asyncHandler(async (req, res) => {
   const event = await Event.findById(req.params.id);
-  if (!event) {
-    res.status(400);
-    throw new Error("Event not found");
-  }
-  const user = await User.findById(req.user.id);
-  // check for user
-  if (!user) {
-    res.status(401);
-    throw new Error("User not found");
-  }
-  // make sure logged in user matches event user
-  if (event.creator.toString() !== user.id.toString()) {
-    if (!event.admin.includes(user.id.toString())) {
-      if(!event.user.includes(user.id.toString())){
-        res.status(401);
-        throw new Error("User not authorized");  
-      }
+  const invites = req.body.invites?.map((invite) => invite);
+  const checkInvites = async (invite) => {
+    if (invite._id === req.user.id) {
+      res.status(400);
+      throw new Error("You cannot invite yourself");
     }
-  }
-  if (event.user.includes(req.body.id.toString())) {
-    throw new Error("User is already a member");
-  }
-  const updatedEventUser = await Event.findOneAndUpdate(
-    { _id: req.params.id },
-    {
-      $push: { user: req.body.id },
-    },
-    { new: true }
-  );
+    if (invite.eventPending?.includes(event._id)) {
+      res.status(400);
+      throw new Error("already pending request");
+    }
 
-  res.status(200).json(updatedEventUser);
+    if (invite.subscriptions?.includes(event._id)) {
+      res.status(400);
+      throw new Error("already member");
+    }
+    const updateRecipient = await User.findOneAndUpdate(
+      { _id: invite },
+      { $push: { eventPending: [event._id] } },
+      { new: true }
+    ).select("eventPending");
+    const updateEvent = await Event.findOneAndUpdate(
+      { _id: req.params.id },
+      { $push: { initPending: invite } },
+      { new: true }
+    );
+   
+  };
+
+  invites.forEach((invite) => checkInvites(invite));
+  res.status(200).json(event);
 });
 
-//@desc Remove user to event
+
+//@desc Remove user from event
 //@route POST /api/events/:id/removeuser
 //@access private
 const deleteEventMember = asyncHandler(async (req, res) => {
@@ -282,19 +282,24 @@ const deleteEventMember = asyncHandler(async (req, res) => {
   // make sure logged in user matches event user
   if (event.creator.toString() !== user.id.toString()) {
     if (!event.admin.includes(user.id.toString())) {
-      res.status(401);
-      throw new Error("User not authorized");
+      if (req.user.id !== req.body.userId) {
+        res.status(401);
+        throw new Error("User not authorized");
+      }
     }
   }
-  const updatedEventUser = await Event.findOneAndUpdate(
+
+  const updatedEvent = await Event.findOneAndUpdate(
     { _id: event.id },
-    {
-      $pull: { user: req.body.id },
-    },
+    { $pull: { members: req.body.userId } },
     { new: true }
   );
 
-  res.status(200).json(updatedEventUser);
+  const updatedEventMember = await User.findOneAndUpdate(
+    { _id: req.body.userId },
+    { $pull: { subscriptions: event._id } }
+  );
+  res.status(200).json(updatedEventMember);
 });
 
 //@desc Remove user to event
@@ -368,9 +373,9 @@ module.exports = {
   deleteEventTodo,
   getEventPosts,
   setEvent,
+  addEventMember,
   updateEvent,
   updateEventAdmin,
-  updateEventMember,
   deleteEventMember,
   deleteEventAdmin,
   deleteEvent,

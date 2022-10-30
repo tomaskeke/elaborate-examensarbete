@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const todoSchema = mongoose.Schema(
 {
     private: {
-        type: String
+        type: String || Boolean
     },
     event: {
         type: String || Boolean

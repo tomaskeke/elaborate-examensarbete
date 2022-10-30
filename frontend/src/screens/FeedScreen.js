@@ -7,6 +7,7 @@ import FeedCard from "../components/Cards/FeedCard";
 import { getEventPosts, resetPosts } from "../features/posts/postsSlice";
 import { fullReset } from "../features/auth/authSlice";
 import CreatePost from "../components/CustomComponents/CreatePost";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function FeedScreen({ navigation }) {
   const [service, setService] = React.useState(null);
@@ -15,10 +16,14 @@ export default function FeedScreen({ navigation }) {
   const { posts, isError, message } = useSelector((state) => state.posts);
   const { user, isSuccess } = useSelector((state) => state.auth);
 
-  React.useEffect(() => {
+  useFocusEffect(React.useCallback(() => {
     dispatch(getEvents());
+    getEventPosts(service);
     if (service) {
       dispatch(getEventPosts(service));
+    }
+    if(isError){
+      console.log(message)
     }
     if (!user) {
       dispatch(fullReset());
@@ -28,18 +33,15 @@ export default function FeedScreen({ navigation }) {
       dispatch(resetEvents());
       dispatch(resetPosts());
     };
-  }, [dispatch, service, isSuccess]);
+  }, [dispatch, service, isSuccess]));
 
+  const postsToSort = [ ...posts]
+  const newestFirstPosts = postsToSort.sort((a, b) => Date.parse(b.date) - Date.parse(a.date))
   return (
     <Box height="100%" backgroundColor={"coolGray.800"}>
       {user ? (
         <>
-          <Box
-            style={{
-              alignItems: "flex-end",
-              marginRight: 4,
-            }}
-          >
+          <Box alignItems="flex-end">
             <CustomSelect
               service={service !== null ? service : null}
               setService={setService}
@@ -48,7 +50,8 @@ export default function FeedScreen({ navigation }) {
           </Box>
           <CreatePost service={service} />
           <View height="100%" alignItems="center">
-            {service !== null && posts.length > 0 ? (
+          {isError ? <Text>No posts found</Text> :
+            service !== null && posts.length > 0 ? (
               <ScrollView
                 showsVerticalScrollIndicator={false}
                 width="95%"
@@ -56,15 +59,15 @@ export default function FeedScreen({ navigation }) {
                 contentContainerStyle={{ paddingBottom: 90 }}
               >
                 {posts &&
-                  posts.map((post, index) => (
-                    <>
+                  newestFirstPosts.map((post, index) => (
+                    <Box key={post._id}>
                       <FeedCard
                         key={post._id}
                         post={post}
                         reverse={index % 2 === 0 ? false : true}
                       />
                       <Divider mt="2" backgroundColor="coolGray.700" />
-                    </>
+                    </Box>
                   ))}
               </ScrollView>
             ) : isError ? (
@@ -76,6 +79,7 @@ export default function FeedScreen({ navigation }) {
             )}
           </View>
         </>
+      
       ) : (
         <Center>
           <Text>Du behöver logga in för att se den här vyn</Text>

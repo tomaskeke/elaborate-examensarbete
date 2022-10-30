@@ -2,9 +2,7 @@ import {
   View,
   FormControl,
   TextArea,
-  Text,
   Input,
-  VStack,
   Button,
   KeyboardAvoidingView,
 } from "native-base";

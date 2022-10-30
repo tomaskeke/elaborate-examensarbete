@@ -1,13 +1,13 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import EventDetails from "./CreateEventTabView/eventDetails/EventDetails";
+import EventDetails from "./eventDetails/EventDetails";
 import MyEventsScreen from "./MyEventsScreen";
 import CreateEventScreen from "./CreateEventScreen"
 import ProfileDetails from "./ProfileDetails";
-import CreateTodoList from "./CreateTodoList";
-import MyTodoLists from "./MyTodoLists";
+import CreateTodoList from "../CreateTodoList";
+import MyTodoLists from "../MyTodoLists";
 import FindFriendScreen from "../AuthScreens/FindFriendScreen";
-import EventDetailsStack from "./CreateEventTabView/eventDetails/EventDetailsStack";
+import EventDetailsStack from "./eventDetails/EventDetailsStack";
 
 const EventsStack = () => {
   const Stack = createNativeStackNavigator();

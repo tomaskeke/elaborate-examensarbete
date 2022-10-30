@@ -22,6 +22,7 @@ const CustomSelect = ({ events, service, setService }) => {
     <Center>
       <Box width="100%">
         <Select
+          height="50"
           borderWidth={1}
           borderTopWidth={0}
           borderLeftWidth={0}

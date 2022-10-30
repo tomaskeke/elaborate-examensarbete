@@ -45,6 +45,29 @@ const getEventMembers = async (eventData) => {
   return response.data;
 };
 
+const addEventMember = async (data, token) => {
+  const config = {
+      headers: {
+          Authorization: "Bearer " + token,
+      },
+  }
+  const response = await axios.put(`${API_URL}/api/events/${data.eventId}/addmember`, {invites: data.userId}, config)
+  return response.data;
+}
+
+
+const removeEventMember = async (data, token) => {
+  const config = {
+    headers: {
+      Authorization: "Bearer " + token,
+    },
+  };
+  const response = await axios.put(
+    `${API_URL}/api/events/${data.eventId}/removemember`, {userId: data.userId},
+    config
+  );
+  return response.data;
+};
 
 const getEventTodos = async (eventId, token) => {
   const config = {
@@ -52,12 +75,12 @@ const getEventTodos = async (eventId, token) => {
       Authorization: "Bearer " + token,
     },
   };
-  const response = await axios.get(`${API_URL}/api/events/${eventId}/todos`, config);
+  const response = await axios.get(`${API_URL}/api/events/${eventId}/todos`);
   return response.data;
 };
 
 
-const deleteEventTodo = async (token, eventId) => {
+const deleteEventTodo = async (eventId, token) => {
   const config = {
     headers: {
       Authorization: "Bearer " + token,
@@ -84,7 +107,7 @@ const updateEvent = async (eventData, eventId, token) => {
 
   return response.data;
 };
-const removeEvent = async (token, eventId) => {
+const removeEvent = async (eventId, token) => {
   const config = {
     headers: {
       Authorization: "Bearer " + token,
@@ -103,7 +126,9 @@ const eventService = {
   getOneEvent,
   getEventMembers,
   getEventTodos,
+  addEventMember,
   deleteEventTodo,
+  removeEventMember,
   removeEvent,
   updateEvent,
 };

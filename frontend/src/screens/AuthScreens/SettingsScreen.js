@@ -4,7 +4,6 @@ import { resetEvents } from "../../features/events/eventSlice";
 import { useSelector, useDispatch } from "react-redux";
 import React from "react";
 import { resetPosts } from "../../features/posts/postsSlice";
-import Constants from "expo-constants";
 import CustomHeaderBar from "../../components/headerbars/CustomHeaderBar"
 
 const SettingsScreen = ({ navigation }) => {

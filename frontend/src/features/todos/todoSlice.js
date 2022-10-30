@@ -29,7 +29,7 @@ export const addTodo = createAsyncThunk(
 )
 export const getTodos = createAsyncThunk(
     "todo/get",
-    async (todoDetails, thunkAPI) => {
+    async (_, thunkAPI) => {
         const token = thunkAPI.getState().auth.user.token;
         try {
             return await todoService.getTodos(token)
@@ -44,6 +44,24 @@ export const getTodos = createAsyncThunk(
         }
     }
 )
+export const getEventTodos = createAsyncThunk(
+    "todo/getEventTodos",
+    async (eventId, thunkAPI) => {
+        const token = thunkAPI.getState().auth.user.token;
+        try {
+            return await todoService.getTodos(eventId, token)
+        } catch (error) {
+        const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+        }
+    }
+)
+
 
 
 export const todoSlice = createSlice({
@@ -82,6 +100,19 @@ export const todoSlice = createSlice({
             state.isError = true;
             state.message = action.payload;
         })
+        .addCase(getEventTodos.pending, (state) => {
+            state.isLoading = true;
+          })
+          .addCase(getEventTodos.fulfilled, (state, action) => {
+            state.isLoading = false;
+            state.isSuccess = true;
+            state.todos = action.payload;
+          })
+          .addCase(getEventTodos.rejected, (state, action) => {
+            state.isLoading = false;
+            state.isError = true;
+            state.message = action.payload;
+          })
         
     }
 

@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler");
 const User = require("../model/userModel");
-
+const Event = require("../model/eventModel");
 // @desc    Register new user
 // @route POST /api/users
 // @access Public
@@ -14,7 +14,6 @@ const generateToken = (id) => {
     expiresIn: "30d",
   });
 };
-
 
 const registerUser = asyncHandler(async (req, res) => {
   const { fName, lName, email, password } = req.body;
@@ -64,7 +63,7 @@ const registerUser = asyncHandler(async (req, res) => {
 const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
-  if(password === undefined) {
+  if (password === undefined) {
     res.status(400);
     throw new Error("Please enter a password");
   }
@@ -111,7 +110,13 @@ const getMe = asyncHandler(async (req, res) => {
 //@route GET /api/users/
 
 const getUsers = asyncHandler(async (req, res) => {
-  const users = await User.find().select({initPending: 1, eventPending: 1, pending: 1, fName: 1, lName: 1});
+  const users = await User.find().select({
+    initPending: 1,
+    eventPending: 1,
+    pending: 1,
+    fName: 1,
+    lName: 1,
+  });
   res.status(200).json(users);
 });
 
@@ -131,7 +136,6 @@ const findUsers = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("No matches found");
   }
-
 
   res.status(200).json(matchedUsers);
 });
@@ -154,7 +158,7 @@ const getUser = asyncHandler(async (req, res) => {
     age,
     friendsList,
     createdAt,
-  } = await User.findById(req.params.id);
+  } = await User.findById(req.params.id).select({id: 1, fname: 1, lname: 1, email: 1, avatar: 1, initPending: 1, pending: 1, eventPending: 1, subscriptions: 1, friendsList: 1});
   res.status(200).json({
     id: _id,
     fName,
@@ -177,42 +181,53 @@ const sendFriendRequest = asyncHandler(async (req, res) => {
   const id = req.user.id;
   const recipientId = req.params.id;
 
-  const recipient = await User.findById({_id: recipientId}).select({pending: 1, initPending: 1})
-  const user = await User.findById({_id: id}).select({pending: 1, initPending: 1});
+  const recipient = await User.findById({ _id: recipientId }).select({
+    pending: 1,
+    initPending: 1,
+  });
+  const user = await User.findById({ _id: id }).select({
+    pending: 1,
+    initPending: 1,
+  });
 
-  if(recipientId === id){
-    res.status(400)
+  if (recipientId === id) {
+    res.status(400);
     throw new Error("You can't send a friend request to yourself");
   }
-  if(Object.values(recipient?.pending).includes(id)){
+  if (Object.values(recipient?.pending).includes(id)) {
     res.status(400);
     throw new Error("already pending request");
   }
-  if(Object.values(recipient?.initPending).includes(id)){
+  if (Object.values(recipient?.initPending).includes(id)) {
     res.status(400);
     throw new Error("already pending request");
   }
-  if(recipient?.friendsList?.includes(id)){
-    res.status(400)
+  if (recipient?.friendsList?.includes(id)) {
+    res.status(400);
     throw new Error("already friends");
   }
 
-  const updateRecipient = await User.findOneAndUpdate({
-    _id: recipientId}, 
-    { $push: { pending: [id]  } },
+  const updateRecipient = await User.findOneAndUpdate(
+    {
+      _id: recipientId,
+    },
+    { $push: { pending: [id] } },
     { new: true }
   );
 
   const updateRequester = await User.findOneAndUpdate(
-    {_id: id},
-    { $push: { initPending:  [recipientId]  } },
+    { _id: id },
+    { $push: { initPending: [recipientId] } },
     { new: true }
   );
-  res.status(201).json([{id: recipientId}]);
+  res.status(201).json([{ id: recipientId }]);
 });
 
 const getInitializedRequests = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.user.id).select({pending: 1, initPending: 1});
+  const user = await User.findById(req.user.id).select({
+    pending: 1,
+    initPending: 1,
+  });
 
   const requests = await User.find({ _id: { $in: user.initPending } });
 
@@ -224,7 +239,10 @@ const getInitializedRequests = asyncHandler(async (req, res) => {
 });
 
 const getFriendRequests = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.user.id).select({pending: 1, initPending: 1});
+  const user = await User.findById(req.user.id).select({
+    pending: 1,
+    initPending: 1,
+  });
 
   const requests = await User.find({ _id: { $in: user.pending } });
 
@@ -247,20 +265,72 @@ const getFriendsListObjects = asyncHandler(async (req, res) => {
   res.status(200).json(users);
 });
 
+const getEventInvites = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user.id).select({
+    eventPending: 1,
+  });
+  const pendingRequests = await Event.find({ _id: { $in: user.eventPending } });
+
+  if (!pendingRequests) {
+    return res.status(400).json("No invites found");
+  }
+  res.status(200).json(pendingRequests)
+});
+
+
+const acceptEventInvite = asyncHandler(async (req, res) => {
+  const id = req.user.id;
+  const requesterId = req.body.id;
+
+  // update user with new event subscription
+  const updateUser = await User.findOneAndUpdate(
+    { _id: id },
+    { $push: { subscriptions: requesterId } },
+    { new: true }
+  );
+
+  //update event with new member
+  const updateRequester = await Event.findOneAndUpdate(
+    { _id: requesterId },
+    { $push: { members: id } },
+    { new: true }
+  );
+
+  // remove id's from eventPending / initPending array on user object.
+  if (updateUser) {
+    const removePendingUser = await User.findOneAndUpdate(
+      { _id: id },
+      { $pull: { eventPending: { $in: [requesterId] } } },
+      { new: true }
+    );
+    if (updateRequester) {
+      const removeinitPending = await Event.findOneAndUpdate(
+        { _id: requesterId },
+        { $pull: { initPending: { $in: [id] } } },
+        { new: true }
+      );
+    }
+  }
+  // Response with object to handle in frontend.
+  const requesterEventObject = await Event.findById(requesterId);
+
+  res.status(201).json(requesterEventObject);
+});
+
 const acceptFriendRequest = asyncHandler(async (req, res) => {
   const id = req.user.id;
   const requesterId = req.params.id;
 
   // update user with new friend
   const updateUser = await User.findOneAndUpdate(
-    {_id: id},
-    { $push: { friendsList: [requesterId]  } },
+    { _id: id },
+    { $push: { friendsList: [requesterId] } },
     { new: true }
   );
 
   //update requester with new friend
   const updateRequester = await User.findOneAndUpdate(
-    {_id: requesterId},
+    { _id: requesterId },
     { $push: { friendsList: [id] } },
     { new: true }
   );
@@ -268,21 +338,21 @@ const acceptFriendRequest = asyncHandler(async (req, res) => {
   // remove id's from pending / initPending array on user object.
   if (updateUser) {
     const removePendingUser = await User.findOneAndUpdate(
-      {_id: id},
+      { _id: id },
       { $pull: { pending: { $in: [requesterId] } } },
       { new: true }
     );
-    if(updateRequester){
+    if (updateRequester) {
       const removeinitPendingRequester = await User.findOneAndUpdate(
-        {_id: requesterId},
+        { _id: requesterId },
         { $pull: { initPending: { $in: [id] } } },
         { new: true }
       );
     }
   }
 
- // Response with object to handle in frontend.
-  const requesterUserObject = await User.findById(requesterId)
+  // Response with object to handle in frontend.
+  const requesterUserObject = await User.findById(requesterId);
 
   res.status(201).json(requesterUserObject);
 });
@@ -292,16 +362,16 @@ const declineFriendRequest = asyncHandler(async (req, res) => {
   const requesterId = req.params.id;
 
   const updateUser = await User.findOneAndUpdate(
-    {_id: id},
+    { _id: id },
     { $pull: { pending: { $in: [requesterId] } } },
     { new: true }
   );
   const updateRequester = await User.findOneAndUpdate(
-    {_id: requesterId},
+    { _id: requesterId },
     { $pull: { initPending: { $in: [id] } } },
     { new: true }
   );
-  res.status(201).json({id: requesterId});
+  res.status(201).json({ id: requesterId });
 });
 
 const cancelPendingRequest = asyncHandler(async (req, res) => {
@@ -309,35 +379,34 @@ const cancelPendingRequest = asyncHandler(async (req, res) => {
   const requesterId = req.params.id;
 
   const updateUser = await User.findOneAndUpdate(
-    {_id: id},
+    { _id: id },
     { $pull: { initPending: { $in: [requesterId] } } },
     { new: true }
   );
   const updateRequester = await User.findOneAndUpdate(
-    {_id: requesterId},
+    { _id: requesterId },
     { $pull: { pending: { $in: [id] } } },
     { new: true }
   );
-  res.status(201).json({id: requesterId});
-})
+  res.status(201).json({ id: requesterId });
+});
 
 const removeFriend = asyncHandler(async (req, res) => {
   const id = req.user.id;
-  const friendId= req.params.id;
+  const friendId = req.params.id;
 
   const updateUser = await User.findOneAndUpdate(
-    {_id: id},
-    { $pull: { friendsList: {$in: [friendId] }  } },
+    { _id: id },
+    { $pull: { friendsList: { $in: [friendId] } } },
     { new: true }
   );
   const updateRequester = await User.findOneAndUpdate(
-    {_id: friendId},
-    { $pull: { friendsList: {$in: [id] } }  },
+    { _id: friendId },
+    { $pull: { friendsList: { $in: [id] } } },
     { new: true }
   );
-  res.status(200).json({id: friendId});
+  res.status(200).json({ id: friendId });
 });
-
 
 module.exports = {
   registerUser,
@@ -345,12 +414,14 @@ module.exports = {
   getMe,
   getUser,
   getUsers,
+  getEventInvites,
   findUsers,
   sendFriendRequest,
   getFriendRequests,
   getInitializedRequests,
   getFriendsListObjects,
   acceptFriendRequest,
+  acceptEventInvite,
   declineFriendRequest,
   cancelPendingRequest,
   removeFriend,

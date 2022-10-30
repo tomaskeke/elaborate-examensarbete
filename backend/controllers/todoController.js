@@ -4,15 +4,14 @@ const Event = require("../model/eventModel");
 const User = require("../model/userModel");
 const Todo = require("../model/todoModel");
 
-const getUserTodos = asyncHandler(async (req, res) => {
-    const userTodos = await Todo.find({
-      userId: req.user.id,
-    });
-    if (!userTodos) {
-      res.status(400).json("No todos found");
-    }
-    res.status(200).json(userTodos);
-  });
+const getEventTodos = asyncHandler(async (req, res) => {
+  const event = await Event.findById(req.params.id);
+  const todos = await event.find({_id: {$in : event.todos}})
+  if (!todos) {
+    res.status(400).json("No todos found");
+  }
+  res.status(200).json(todos);
+});
 
 
 const addTodoList = asyncHandler(async (req, res) => {
@@ -32,6 +31,7 @@ const addTodoList = asyncHandler(async (req, res) => {
 
   if(event){
     const todoList = await Todo.create({
+      userId: req.user.id,
       private: false,
       event: true,
       userDetails: user,
@@ -57,7 +57,7 @@ const getOneTodo = asyncHandler(async (req, res) => {
 })
 
 module.exports = {
-    getUserTodos,
+    getEventTodos,
     getOneTodo,
     addTodoList,
   };

@@ -21,10 +21,20 @@ const addTodo = async (todoDetails, token) => {
     return response.data;
 }
 
+const getEventTodos = async (eventId, token) => {
+    const config = {
+        headers: {
+          Authorization: "Bearer " + token,
+        }
+    }
+    const response = await axios.get(`${API_URL}/api/events/${eventId}/todos`, config)
+    return response.data;
+}
 
 const todoService = {
     addTodo,
     getTodos,
+    getEventTodos,
 }
 
 export default todoService;

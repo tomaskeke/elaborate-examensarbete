@@ -1,5 +1,5 @@
 import {
-  Center,
+  Badge,
   HStack,
   Text,
   VStack,
@@ -8,7 +8,6 @@ import {
   IconButton,
   Avatar,
   Icon,
-  Image,
 } from "native-base";
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
@@ -19,12 +18,13 @@ import {
   getFriendRequests,
   getFriendsList,
   getInitializedRequests,
-  resetFriends,
 } from "../features/friends/friendsSlice";
+import { getEvents } from "../features/events/eventSlice"
 import { resetSearch } from "../features/search/searchSlice";
 import { resetEventStates } from "../features/events/eventSlice";
+import { getEventInvites } from "../features/auth/authSlice";
 const HomeScreen = ({ navigation }) => {
-  const { user } = useSelector((state) => state.auth);
+  const { user, eventPending } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
   const buttons = [
@@ -59,6 +59,8 @@ const HomeScreen = ({ navigation }) => {
       dispatch(getFriendRequests());
       dispatch(getInitializedRequests());
       dispatch(getFriendsList(user.friendsList));
+      dispatch(getEvents());
+      dispatch(getEventInvites());
       dispatch(resetSearch());
       dispatch(resetEventStates());
     }, [dispatch])
@@ -80,6 +82,14 @@ const HomeScreen = ({ navigation }) => {
         </Box>
       </Box>
       <HStack space={4} justifyContent="center" padding={3}>
+      {eventPending?.length > 0 &&
+        <Badge position="absolute"
+        colorScheme="danger" borderRadius={"full"} mb="-1"  mr={-5} zIndex={1} variant="solid" alignSelf="flex-end" _text={{
+        fontSize: 12
+        }}>
+        {eventPending && eventPending.length > 0 && eventPending.length}
+        </Badge>
+      } 
         {buttons.map((screen, index) => (
           <IconButton
             _icon={{

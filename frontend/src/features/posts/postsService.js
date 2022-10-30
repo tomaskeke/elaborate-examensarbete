@@ -17,7 +17,7 @@ const setEventPost = async (eventData, token) => {
 
 const getEventPosts = async (eventId) => {
   const response = await axios.get(
-    API_URL + "/api/events/" + eventId + "/eventposts"
+    `${API_URL}/api/events/${eventId}/eventposts`
   );
   return response.data;
 };

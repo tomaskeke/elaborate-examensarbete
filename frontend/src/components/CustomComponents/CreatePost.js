@@ -2,7 +2,7 @@ import { View, Text, Input, Button, Icon, Box } from 'native-base'
 import { Ionicons } from "@expo/vector-icons" 
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { setEventPost } from '../../features/posts/postsSlice'
+import { setEventPost, getEventPosts } from '../../features/posts/postsSlice'
 
 const CreatePost = ({service}) => {
     const dispatch = useDispatch()
@@ -25,6 +25,7 @@ const CreatePost = ({service}) => {
       <Button  disabled={content === null || content === "" ? true : false} backgroundColor="success.800" _pressed={{backgroundColor: "success.900"}} onPress={() => {
       setShow(!show)
       dispatch(setEventPost(eventData))
+      dispatch(getEventPosts(service))
       }}>Skapa inlägg</Button>
     </View>
      }

@@ -1,4 +1,4 @@
-import React, {Component, Fragment} from "react";
+import React, {Fragment} from "react";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { persistStore } from "redux-persist";
@@ -9,7 +9,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import CheckLoggedIn from "./src/screens/CheckLoggedIn";
 import { useFonts, Inter_100Thin, Inter_200ExtraLight, Inter_300Light, Inter_400Regular, Inter_600SemiBold, Inter_700Bold, Inter_900Black } from "@expo-google-fonts/inter";
-import * as SplashScreen from "expo-splash-screen";
 
 
 let persistor = persistStore(store);
@@ -19,14 +18,6 @@ const theme = extendTheme({
     useSystemColorMode: false,
     initialColorMode: "dark",
   },
-  
-  // Make sure values below matches any of the keys in `fontConfig`
-  fonts: {
-    heading: "Inter_semibold",
-    body: "Inter_200ExtraLight",
-    mono: "Roboto",
-  },
-  
 });
 
 
@@ -56,7 +47,6 @@ export default function App() {
         </PersistGate>
       </Provider>
     </NativeBaseProvider>
-    
     </SafeAreaView>
     </Fragment>
   );

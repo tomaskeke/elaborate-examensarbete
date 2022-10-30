@@ -97,7 +97,7 @@ const dispatch = useDispatch();
             <Button
               onPress={() => {
                 dispatch(createEvent(formData))
-                isSuccess &&
+                setPercentFour(100)
                 navigation.navigate("MyEventsScreen")
                 }}
               backgroundColor="success.800"

@@ -7,7 +7,8 @@ import {API_URL} from "@env"
 
 const FeedCard = ({ post, reverse }) => {
   const [postCreator, setPostCreator] = React.useState("");
-  const { events } = useSelector((state) => state.events);
+  const { events, } = useSelector((state) => state.events);
+  const { posts, isError, message } = useSelector((state) => state.posts);
   const { user } = useSelector((state) => state.auth)
   
   // finds event in which post is made
@@ -18,19 +19,27 @@ const FeedCard = ({ post, reverse }) => {
   let userId = post.userId;
   const getUser = async (userId) => {
     const response = await axios.get(`${API_URL}/api/users/${userId}`);
-    console.log(response.data)
     setPostCreator(response.data);
   };
 
   React.useEffect(() => {
-    getUser(userId);
+    if(posts.length > 0){
+      getUser(userId);
+    }
+    if(isError){
+      console.log(message)
+    }
   }, []);
+
+  if(isError) {
+    return <Text>No Posts Found</Text>
+  }
 
   return (
     <View key={post._id} w="100%" mt={2}>
     { user &&
     <>
-      <Box padding={2} flexDir={reverse ? "row" : "row-reverse"} width="100%" backgroundColor="coolGray.800">
+      <Box key={post._id} padding={2} flexDir={reverse ? "row" : "row-reverse"} width="100%" backgroundColor="coolGray.800">
         <Box flex={1} alignItems="center" justifyContent="center">
         <Avatar size="md" source={{
           uri: postCreator.avatar

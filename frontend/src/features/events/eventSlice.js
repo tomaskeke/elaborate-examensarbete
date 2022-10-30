@@ -118,6 +118,41 @@ export const deleteEventTodo = createAsyncThunk(
   }
 );
 
+export const removeEventMember = createAsyncThunk(
+  "events/deleteMember",
+  async (data, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token;
+      return await eventService.removeEventMember(data, token);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+export const addEventMember = createAsyncThunk(
+  "events/addMember",
+  async (data, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token;
+      return await eventService.addEventMember(data, token);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
 export const updateEvent = createAsyncThunk(
   "events/update",
   async (eventData, thunkAPI) => {
@@ -177,7 +212,6 @@ export const eventSlice = createSlice({
         state.isLoading = false;
         state.isError = false;
         state.isSuccess = true;
-        state.events.push(action.payload);
       })
       .addCase(createEvent.rejected, (state, action) => {
         state.isLoading = false;
@@ -255,31 +289,31 @@ export const eventSlice = createSlice({
         state.isError = true;
         state.message = action.payload;
       })
-      .addCase(getEventTodos.pending, (state) => {
+      .addCase(removeEventMember.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(getEventTodos.fulfilled, (state, action) => {
+      .addCase(removeEventMember.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.isSuccess = true;
-        state.eventTodos = action.payload;
+        state.isError = false;
+        state.isUpdated = true;
+        state.members = state.members.filter(
+          (member) => member !== action.payload
+        );
       })
-      .addCase(getEventTodos.rejected, (state, action) => {
+      .addCase(removeEventMember.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;
       })
-      .addCase(deleteEventTodo.pending, (state) => {
+      .addCase(addEventMember.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(deleteEventTodo.fulfilled, (state, action) => {
+      .addCase(addEventMember.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isError = false;
         state.isUpdated = true;
-        state.todos = state.todos.filter(
-          (todo) => todo !== action.payload
-        );
       })
-      .addCase(deleteEventTodo.rejected, (state, action) => {
+      .addCase(addEventMember.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;

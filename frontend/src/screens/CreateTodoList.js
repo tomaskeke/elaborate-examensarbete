@@ -11,11 +11,11 @@ import {
 } from "native-base";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import InfoCard from "../../components/Cards/InfoCard";
-import CustomHeaderBar from "../../components/headerbars/CustomHeaderBar";
-import CheckList from "../../components/CustomComponents/CheckList";
-import { getEvents } from "../../features/events/eventSlice";
-import { addTodo, getTodos, resetTodos } from "../../features/todos/todoSlice";
+import InfoCard from "../components/Cards/InfoCard";
+import CustomHeaderBar from "../components/headerbars/CustomHeaderBar";
+import CheckList from "../components/CustomComponents/CheckList";
+import { getEvents } from "../features/events/eventSlice";
+import { addTodo, getTodos, resetTodos } from "../features/todos/todoSlice";
 import { Ionicons } from "@expo/vector-icons";
 
 const CreateTodoList = ({ navigation }) => {
@@ -64,7 +64,7 @@ const CreateTodoList = ({ navigation }) => {
       <View alignItems="center">
         <InfoCard
           icon="checkbox-outline"
-          info="Här skapar du din to-do lista som du kan välja att publicera i ett evenemang eller behålla privat. Du hittar sedan dina listor på hemskärmen"
+          info="Här skapar du din to-do lista som du kan välja att publicera i ett evenemang eller behålla privat. Du hittar sedan dina listor under Mina att-göra listor."
         />      
         <View alignItems="center" justifyContent="center" flexDir="row">
         <Select
@@ -72,6 +72,7 @@ const CreateTodoList = ({ navigation }) => {
             marginTop="1"
             padding="2.5"
             width="45"
+            height="47"
             borderWidth="0"
             onValueChange={(event) => {
               setEvent(event)

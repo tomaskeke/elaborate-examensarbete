@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import authService from "./authService";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
 // get user from AsyncStorage
 
 const getUserFromAsyncStorage = async (user) => {
@@ -15,6 +14,7 @@ const initialState = {
   user: user ? user : null,
   inspectUser: {},
   friendsList: [],
+  eventPending: [],
   isError: false,
   isSuccess: false,
   isLoading: false,
@@ -70,6 +70,41 @@ export const getUser = createAsyncThunk(
     }
   }
 );
+export const getEventInvites = createAsyncThunk(
+  "auth/getEventInvites",
+  async (_, thunkAPI) => {
+    const token = thunkAPI.getState().auth.user.token;
+    try {
+      return await authService.getEventInvites(token);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+export const acceptEventInvite = createAsyncThunk(
+  "auth/acceptEventInvites",
+  async (id, thunkAPI) => {
+    const token = thunkAPI.getState().auth.user.token;
+    try {
+      return await authService.acceptEventInvite(id, token);
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
+
 
 export const authSlice = createSlice({
   name: "auth",
@@ -91,7 +126,6 @@ export const authSlice = createSlice({
       .addCase(register.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
-        state.user = action.payload;
       })
       .addCase(register.rejected, (state, action) => {
         state.isLoading = false;
@@ -133,6 +167,34 @@ export const authSlice = createSlice({
         state.isError = true;
         state.message = action.payload;
         state.inspectUser = {};
+      })
+      .addCase(getEventInvites.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getEventInvites.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+        state.eventPending = action.payload;
+      })
+      .addCase(getEventInvites.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
+      })
+      .addCase(acceptEventInvite.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(acceptEventInvite.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+        state.eventPending = action.payload;
+      })
+      .addCase(acceptEventInvite.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload;
       });
   },
 });
