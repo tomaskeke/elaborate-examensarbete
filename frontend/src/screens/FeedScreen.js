@@ -14,13 +14,16 @@ export default function FeedScreen({ navigation }) {
   const dispatch = useDispatch();
   const { events } = useSelector((state) => state.events);
   const { posts, isError, message } = useSelector((state) => state.posts);
-  const { user, isSuccess } = useSelector((state) => state.auth);
-
+  const { user } = useSelector((state) => state.auth);
+console.log(service)
   useFocusEffect(React.useCallback(() => {
-    dispatch(getEvents());
-    getEventPosts(service);
-    if (service) {
+    dispatch(getEventPosts(service))
+    if (!service) {
+      dispatch(getEvents());
+    }
+      if (service) {
       dispatch(getEventPosts(service));
+      dispatch(getEvents());
     }
     if(isError){
       console.log(message)
@@ -30,10 +33,9 @@ export default function FeedScreen({ navigation }) {
       navigation.navigate("LoginScreen");
     }
     return () => {
-      dispatch(resetEvents());
       dispatch(resetPosts());
     };
-  }, [dispatch, service, isSuccess]));
+  }, [service, dispatch]));
 
   const postsToSort = [ ...posts]
   const newestFirstPosts = postsToSort.sort((a, b) => Date.parse(b.date) - Date.parse(a.date))
@@ -43,7 +45,7 @@ export default function FeedScreen({ navigation }) {
         <>
           <Box alignItems="flex-end">
             <CustomSelect
-              service={service !== null ? service : null}
+              service={service}
               setService={setService}
               events={events}
             />

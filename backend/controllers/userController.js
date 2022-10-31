@@ -8,7 +8,6 @@ const Event = require("../model/eventModel");
 // @access Public
 
 // generate JWT
-
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: "30d",
@@ -158,7 +157,7 @@ const getUser = asyncHandler(async (req, res) => {
     age,
     friendsList,
     createdAt,
-  } = await User.findById(req.params.id).select({id: 1, fname: 1, lname: 1, email: 1, avatar: 1, initPending: 1, pending: 1, eventPending: 1, subscriptions: 1, friendsList: 1});
+  } = await User.findById(req.params.id).select({id: 1, fName: 1, lName: 1, email: 1, avatar: 1, initPending: 1, pending: 1, eventPending: 1, subscriptions: 1, friendsList: 1});
   res.status(200).json({
     id: _id,
     fName,
@@ -182,10 +181,6 @@ const sendFriendRequest = asyncHandler(async (req, res) => {
   const recipientId = req.params.id;
 
   const recipient = await User.findById({ _id: recipientId }).select({
-    pending: 1,
-    initPending: 1,
-  });
-  const user = await User.findById({ _id: id }).select({
     pending: 1,
     initPending: 1,
   });

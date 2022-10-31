@@ -26,10 +26,10 @@ router.post("/login", loginUser);
 router.post("/search", findUsers);
 router.post("/:id/addfriend", protect, sendFriendRequest);
 router.post("/:id/acceptfriend", protect, acceptFriendRequest);
-router.post("/accepteventinvite", protect, acceptEventInvite) 
-router.post("/:id/cancelpending", protect, cancelPendingRequest);
 router.post("/:id/declinefriend", protect, declineFriendRequest);
+router.post("/:id/cancelpending", protect, cancelPendingRequest);
 router.post("/:id/removefriend", protect, removeFriend);
+router.post("/accepteventinvite", protect, acceptEventInvite) 
 router.get("/eventinvites", protect, getEventInvites)
 router.get("/friendrequests", protect, getFriendRequests);
 router.get("/sentfriendrequests", protect, getInitializedRequests);

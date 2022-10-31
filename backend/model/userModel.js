@@ -33,7 +33,7 @@ const userSchema = mongoose.Schema(
       default: "https://images.unsplash.com/photo-1567095751004-aa51a2690368?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80"
     },
     subscriptions: {
-      type: [mongoose.Schema.Types.objectId],
+      type: [mongoose.Schema.Types.ObjectId],
       select: true,
       default: [],
     },

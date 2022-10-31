@@ -154,10 +154,10 @@ const setEvent = asyncHandler(async (req, res) => {
       { $push: { initPending: invite } },
       { new: true }
     );
-    res.status(200).json(event);
   };
-
+  
   invites.forEach((invite) => checkInvites(invite));
+  res.status(200).json(event);
 });
 
 // @desc    Update events

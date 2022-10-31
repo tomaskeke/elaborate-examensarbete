@@ -16,11 +16,13 @@ const FeedCard = ({ post, reverse }) => {
     return value._id === post.event;
   };
   const eventTitle = events.find(findTitle);
-  let userId = post.userId;
+  const userId = post.userId;
   const getUser = async (userId) => {
     const response = await axios.get(`${API_URL}/api/users/${userId}`);
     setPostCreator(response.data);
   };
+
+  console.log(post)
 
   React.useEffect(() => {
     if(posts.length > 0){

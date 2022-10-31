@@ -5,18 +5,6 @@ import { useDispatch } from "react-redux";
 import { getEventPosts } from "../../features/posts/postsSlice";
 
 const CustomSelect = ({ events, service, setService }) => {
-  const dispatch = useDispatch();
-
-  React.useEffect(() => {
-    if (service !== null) {
-      dispatch(getEventPosts(service));
-    }
-  }, [service, dispatch]);
-
-  useFocusEffect(React.useCallback(() => {
-
-  }, []))
-
 
   return (
     <Center>
